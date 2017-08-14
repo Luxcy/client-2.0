@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+    <head>  
+        <title>DataVisualization</title>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <script src="js/jquery-2.1.1.min.js" type="text/javascript"></script>
+        <script src="js/bootstrap.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="js/jonthornton-jquery-timepicker/jquery.timepicker.js"></script>
+        <link rel="stylesheet" type="text/css" href="js/jonthornton-jquery-timepicker/jquery.timepicker.css" />
+        <script type="text/javascript" src="js/jonthornton-jquery-timepicker/lib/bootstrap-datepicker.js"></script>
+        <link rel="stylesheet" type="text/css" href="js/jonthornton-jquery-timepicker/lib/bootstrap-datepicker.css" />
+        <script type="text/javascript" src="js/jonthornton-jquery-timepicker/lib/site.js"></script>
+        <link rel="stylesheet" type="text/css" href="js/jonthornton-jquery-timepicker/lib/site.css" />
+        <script src="http://jonthornton.github.io/Datepair.js/dist/datepair.js"></script>
+        <script src="http://jonthornton.github.io/Datepair.js/dist/jquery.datepair.js"></script>
+        <link href="http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="css/superset.css" />
+        <link rel="stylesheet" type="text/css" href="css/flags16.css" />  
+        <script src="js/css-theme.9bab23a75b7da77b0ccd.entry.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" />
+        <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+        <script src="js/plotly-latest.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="css/style.css" /> 
+        <script src="js/display.js" type="text/javascript"></script>
+        <script src="js/token.js" type="text/javascript"></script>
+    </head>
+    
+    <body>
+        <!-- select stations -->
+        <div id="popSta" class="Slect_stations" style="display:none;">
+            <div class="sta_content">
+                <span class="close" onclick="closeDivFun()">&times;</span>
+                <div id="select_stations"></div> 
+            </div>
+        </div> 
+        
+        <!-- top of the paper -->  
+        <header class="top" role="header">
+            <div class="navbar navbar-static-top navbar-inverse" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand">
+                            <p width="126">DataVisualization</p>
+                        </a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav"></ul>
+                        <ul class="nav navbar-nav navbar-right" id="logout-btn-top" style="display:none;">
+                            <li><a href="javascript:void(0)" onclick="Logoutbtn()">
+                            <i class="fa fa-fw fa-sign-in"></i>Logout</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right" id="login-btn-top" style="display:none;">
+                            <li><a href="login.html">
+                            <i class="fa fa-fw fa-sign-in"></i>Login</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+      
+    
+        <div class="row">
+            <!-- selection part -->
+            <div class="col-sm-4">
+                <div class="scrollbar-container">
+                    <div class="scrollbar-content">
+                        <div class="control-panel-section panel panel-default">
+                            
+                            <div class="panel-heading">
+                                <div class="panel-title">Select options</div>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="row space-1">
+                                    <div class="col-lg-12 col-xs-12">
+                                          <div class="pull-left">
+                                            <label class="control-label"><span>Chart Type</span></label>
+                                          </div>
+                                          <div class="Select Select--single is-searchable has-value">
+                                             <div class="Select-control">
+                                                 <div class="Select-input">
+                                                      <select class="Select-input" id='graph' name='graph' onchange="Station_display(this.value)" autocomplete="off">
+                                                        <option selected="selected" value='contour'>contour</option>
+                                                        <option value='line'>line</option>
+                                                      </select>
+                                                  </div>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="panel-body" id="table_stations" style="display:none;">
+                                <div class="row space-1">
+                                    <div class="col-lg-12 col-xs-12">
+                                            <div class="pull-left">
+                                                <label class="control-label"><span>Stations</span></label>
+                                            </div>
+
+                                            <div class="Select Select--single is-searchable has-value">
+                                                <div class="Select-control">
+                                                    <div class="Select-input">
+                                                        <input id="stations" type="text" name="stations" value=" " disabled="disabled" autocomplete="off"/> 
+                                                        <a id="select_sta" href="javascript:;" onclick="showDivFun()"><img border="0" src="stations.gif" /></a>
+                                                        <script src="js/select_stations.js" type="text/javascript"></script> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="row space-1">
+                                    <div class="col-lg-12 col-xs-12">
+                                        <div class="pull-left">
+                                            <label class="control-label"><span>Magnetic Component</span></label>
+                                        </div>
+
+                                        <div class="Select Select--single is-searchable has-value">
+                                            <div class="Select-control">
+                                                <div class="Select-input">
+                                                    <select class="Select-input" id='term' name='term' autocomplete="off">
+                                                    <option selected="selected" value='X'>X</option>
+                                                    <option value='Y'>Y</option>
+                                                    <option value='Z'>Z</option>
+                                                    <option value='F'>F</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="row space-1">
+                                    <div class="col-lg-12 col-xs-12">
+                                        <div class="pull-left">
+                                            <label class="control-label"><span>Sample Rate</span></label>
+                                        </div>
+
+                                        <div class="Select Select--single is-searchable has-value">
+                                            <div class="Select-control">
+                                                <div class="Select-input">
+                                                    <select class="Select-input" id='sample_rate' name='sample_rate' autocomplete="off">
+                                                    <option selected="selected" value='min'>min</option>
+                                                    <option value='sec'>sec</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="row space-1">
+                                    <div class="col-lg-12 col-xs-12">
+                                        <div class="pull-left">
+                                            <label class="control-label"><span>Data Type</span></label>
+                                        </div>
+
+                                        <div class="Select Select--single is-searchable has-value">
+                                            <div class="Select-control">
+                                                <div class="Select-input">
+                                                    <select class="Select-input" id='data_type' name='data_type' autocomplete="off">
+                                                    <option value='variation'>variation</option>
+                                                    <option value='provisional'>provisional</option>
+                                                    <option value='quasi-definitive'>quasi-definitive</option>
+                                                    <option value='definitive'>definitive</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="row space-1">
+                                    <div class="col-lg-12 col-xs-12">
+                                        <div class="pull-left">
+                                            <label class="control-label"><span>Time</span></label>
+                                        </div>
+
+                                        <div class="Select Select--single is-searchable has-value">
+                                            <div class="Select-control">
+                                                <div class="Select-input">
+                                                    <div id="Timeselection" class="Select-time">
+                                                        <input type="text" class="date start" id="starttime1" value="" autocomplete="off"/>
+                                                        <input type="text" class="time start" id="starttime2" value="00:00:00" autocomplete="off"/>
+                                                        to
+                                                        <input type="text" class="date end" id="endtime1" value="" autocomplete="off"/>
+                                                        <input type="text" class="time end" id="endtime2" value="00:00:00" autocomplete="off"/>
+                                                        <script type="text/javascript" src="js/select.js"></script>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="row space-1">
+                                    <div class="col-lg-12 col-xs-12">
+                                        <div class="Select Select--single is-searchable has-value">
+                                            <input class="btn-1" id='search' type="submit" value="Submit">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                 </div>
+            </div>
+
+            <!-- data and chart part -->
+            <div class="col-sm-8">
+                <div class="chart-container">
+                    <div class="panel panel-default" style="height: 700.05px;">
+                        <div class="col-md-offset-2 col-md-8" id="date-mid-2">
+                            <div class="tab" role="tabpanel">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active">
+                                        <a href="#Section1" aria-controls="home" role="tab" data-toggle="tab">graph</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a href="#Section2" aria-controls="profile" role="tab" data-toggle="tab">data</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tabs">
+                                    <!-- graph  absent-->
+                                    <div role="tabpanel" class="tab-pane fade in active" id="Section1"></div>
+                                    <!-- data list absent-->
+                                    <div role="tabpanel" class="tab-pane fade" id="Section2">
+                                    <div class="datalist-1">
+                                        <table id="contour_table" class="cell-border" cellspacing="0" width="100%" style="display:none;"> 
+                                            <tbody id="table1"></tbody> 
+                                        </table> 
+                                    </div>
+                                    </div>
+                                </div>
+                                <script src="js/plot.js" type="text/javascript"></script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html>
