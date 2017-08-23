@@ -64,6 +64,20 @@ $(document).ready(function(){
         data = [trace1,trace2];
         layout = {
             hovermode:'closest',
+        xaxis:{
+            range:[-180,180],
+            zeroline:false,
+            showline:true,
+            mirror:'ticks',
+            ticks:'inside'
+        },
+        yaxis:{
+            range:[-90,90],
+            zeroline:false,
+            showline:true,
+            mirror:'ticks',
+            ticks:'inside'
+        }
          };
         Plotly.newPlot('select_stations', data,layout,{displayModeBar: false});
         var flag = 0;

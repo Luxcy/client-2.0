@@ -29,8 +29,8 @@
                     </div>
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="logon.html">
-                            <i class="fa fa-fw fa-sign-in"></i>sign up</a></li>
+                            <li><a href="login.html">
+                            <i class="fa fa-fw fa-sign-in"></i>Login</a></li>
                         </ul>
                     </div>
                 </div>
@@ -41,22 +41,16 @@
             <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
                 <div class="panel panel-primary" >
                     <div class="panel-heading">
-                        <div class="panel-title">Sign In</div>
+                        <div class="panel-title">Send Email</div>
                     </div>
-                    <div style="padding-top:30px" class="panel-body" >
-                        <div class="help-block">Enter your email and password below:</div>
+                    <div style="padding-top:30px" class="panel-body" id="part-one">
+                        <div class="help-block">Enter your email to reset your password:</div>
                         <div class="control-group">
                             <label class="control-label" for="openid">Email:</label>
                             <div class="controls">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                    <input class="form-control" id="email" name="email" size="80" type="text" value="python_api@126.com" required="required">
-                                </div>
-                                <a href="forgot.html" style="text-decoration:none;float: right;">Forgot Password?</a> 
-                                <label class="control-label" for="openid">Password:</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                    <input class="form-control" id="password" name="password" size="80" type="password" value="wu" required="required">
+                                    <input class="form-control" id="email" name="email" size="80" type="text" value="" required="required">
                                 </div>
                             </div>
                         </div>
@@ -64,14 +58,20 @@
                             <div class="controls">
                                 <br>
                                 <div>
-                                    <input class="btn btn-primary btn-block"  id="signin-btn" type="submit" value="Sign In">
+                                    <input class="btn btn-primary btn-block"  id="signin-btn" type="submit" value="Send">
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div style="padding-top:30px;display:none;" class="panel-body" id="part-two">
+                        <div class="help-block" id="b_message"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <script src="js/in-token.js" type="text/javascript"></script>
+        <script src="js/forgot-token.js" type="text/javascript"></script>
     </body>
 </html>
+<!-- 
+Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder. 
+-->

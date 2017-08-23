@@ -14,12 +14,14 @@
              data:{"email":email,"password":password},
              dataType:'json',
              success:function(data2){
-                 //var token=data2.token;
-                 var token=btoa(data2.token+":");
-                 sessionStorage.setItem("token","Basic "+token);
-                 //sessionStorage.setItem("token",token);
-                 window.location.href='client.html';
-
+                console.log(data2);
+                 if(data2.result=='error'){
+                    alert(data2.message);
+                 }else{
+                    var token=btoa(data2.token+":");
+                    sessionStorage.setItem("token","Basic "+token);
+                    window.location.href='client.html';
+                 }
              },
              error: function(jqXHR){
              alert("发生了错误xxx：" + jqXHR.status);  

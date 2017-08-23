@@ -1,78 +1,30 @@
-function contour(){
-    var station_name=[];
-    var longitude=[];
-    var latitude=[];
-    var station_code=[];
-    var term=[];
-    var stations=[];
-    var datas=[];
+function add0(m){return m<10?'0'+m:m }
+function format(stamp)
+{
+    var time = new Date(stamp);
+    var y = time.getFullYear();
+    var m = time.getMonth()+1;
+    var d = time.getDate();
+    var h = time.getHours();
+    var mm = time.getMinutes();
+    var s = time.getSeconds();
+    return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+}
+var station_name=[];
+var station_lon=[];
+var station_lat=[];
+var datas=[];
+var offset=0;
+var start_tab=0;
+var end_tab=0;
+var cnd;
+var num=1000;
+function contour_1(cnt,term,longitude,latitude,contour_time,station_name2,station_code){
     var name_code=[];
     var name_code2=[];
-    var cnt,cnd;
-    console.log(Url);
-    $.ajax({ 
-        type: "GET",
-        url: Url+"/stations",
-        dataType: "JSON",
-        async:false,
-        beforeSend:function(request) {
-            token = window.sessionStorage.getItem('token');
-            request.setRequestHeader("Authorization", token);
-        },
-        success: function(data) {
-            cnt=data.count;
-            stations=data.stations;
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                var result = eval("("+XMLHttpRequest.responseText+")");
-                       console.log(result.message);
-                    },
-    });
-    $.ajax({ 
-        type: "GET",
-        url: Url+"/data?"
-             +"sample_rate="+$("#sample_rate").val()+"&term="+$("#term").val()
-             +"&data_type="+$("#data_type").val()[0]
-             +"&start_time="+$("#starttime1").val()+" "+$("#starttime2").val()
-             +"&end_time="+$("#endtime1").val()+" "+$("#endtime2").val(),
-        dataType: "JSON",
-        async:false,
-        beforeSend: function(request) {
-            token = window.sessionStorage.getItem('token');
-            request.setRequestHeader("Authorization", token);
-        },
-        success: function(data) {
-            cnd=data.count;
-            datas=data.data;
-        },
-        error: function(jqXHR){
-            alert("发生错误：" + jqXHR.status);  
-        },     
-    });
-    if(cnd==0) {
-        alert("暂无数据");
-        return;
-    }
-    for(var i=0;i<cnd;i++){
-        for(var j=0;j<cnt;j++){
-            if(datas[i]["IAGA CODE"]==stations[j]["IAGA CODE"]){
-                datas[i]["Geodetic Latitude"]=stations[j]["Geodetic Latitude"];
-                datas[i]["Geodetic Longitude"]=stations[j]["Geodetic Longitude"];
-                datas[i]["Station Name"]=stations[j]["Station Name"];
-                datas[i]["IAGA CODE"]=stations[j]["IAGA CODE"];
-                break;
-            }
-        }
-    }
-    var tr = $("#term").val();
-    station_name=datas.map(function(v){return v["Station Name"];});
-    longitude=datas.map(function(v){return v["Geodetic Longitude"]-180;});
-    latitude=datas.map(function(v){return v["Geodetic Latitude"];});
-    term=datas.map(function(v){return v[tr];});
-    station_code=datas.map(function(v){return v["IAGA CODE"];});
-    for(var i=0;i<cnd;i++)
+    for(var i=0;i<cnt;i++)
    {
-        name_code2[i] = station_name[i]+"("+station_code[i]+")";
+        name_code2[i] = station_name2[i]+"("+station_code[i]+")";
         name_code[i]="station:"+name_code2[i];
    }
     //=========================================================================
@@ -93,9 +45,9 @@ function contour(){
         y: latitude,
         text:name_code,
         type: 'contour',
-        contours:{
-            coloring: 'lines'
-        },
+        //contours:{
+            //coloring: 'lines'
+       // },
         showscale:true,
     };
     trace3={
@@ -109,17 +61,33 @@ function contour(){
         },
         showlegend:false,
     };
-    data = [trace1,trace2,trace3];
+    //data = [trace1,trace2,trace3];
+    data = [trace2];
     layout = {
         //title: 'Contour',
         //colorbars:flase,
+        xaxis:{
+            range:[-180,180],
+            zeroline:false,
+            showline:true,
+            mirror:'ticks',
+            ticks:'inside'
+        },
+        yaxis:{
+            range:[-90,90],
+            zeroline:false,
+            showline:true,
+            mirror:'ticks',
+            ticks:'inside'
+        }
     };
-    Plotly.newPlot('Section1', data,layout,{displayModeBar: false});
+    Plotly.newPlot('chart-part', data,layout,{displayModeBar: false});
     //=========================================================================
     $('#contour_table').html("");
     var html1='<thead>'
                 +'<tr>'
                 +'<th>台站(IAGA CODE)</th>'
+                +'<th>时间</th>'
                 +'<th>经度</th>'
                 +'<th>纬度</th>'
                 +'<th class="term_name">磁分量</th>'
@@ -128,6 +96,7 @@ function contour(){
                 +'<tfoot>'
                 +'<tr>'
                 +'<th>台站(IAGA CODE)</th>'
+                +'<th>时间</th>'
                 +'<th>经度</th>'
                 +'<th>纬度</th>'
                 +'<th class="term_name">磁分量</th>'
@@ -144,35 +113,184 @@ function contour(){
     $('#table1').html("");
     document.getElementById("contour_table").style.display="";
     var html='';
-    for(var i=0;i<cnd;i++){
+    for(var i=0;i<cnt;i++){
         html+='<tr>'
             +'<td>'+name_code2[i]+'</td>'
+            +'<td>'+contour_time[i]+'</td>'
             +'<td>'+longitude[i]+'</td>'
             +'<td>'+latitude[i]+'</td>'
             +'<td>'+term[i]+'</td>'
             +'</tr>';
     }
     $('#table1').html(html);
-     $('#contour_table').DataTable({
+     var table=$('#contour_table').DataTable({
         "bAutoWidth": false,
         "searching":false,
         "destroy":true
      });
-     $(".term_name").html("磁分量"+tr);
+     var tr = $("#term").val();
+    $(".term_name").html("磁分量"+tr);  
 }
-function add0(m){return m<10?'0'+m:m }
-function format(shijianchuo)
-{
-    var time = new Date(shijianchuo);
-    var y = time.getFullYear();
-    var m = time.getMonth()+1;
-    var d = time.getDate();
-    var h = time.getHours();
-    var mm = time.getMinutes();
-    var s = time.getSeconds();
-    return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+function send(offset){
+    $.ajax({ 
+    type: "GET",
+    url: Url+"/data?"
+         +"sample_rate="+$("#sample_rate").val()+"&term="+$("#term").val()
+         +"&data_type="+$("#data_type").val()[0]
+         +"&start_time="+$("#starttime1").val()+" "+$("#starttime2").val()
+         +"&end_time="+$("#endtime1").val()+" "+$("#endtime2").val()
+         +"&offset="+offset,
+    dataType: "JSON",
+    async:false,
+    beforeSend: function(request) {
+        token = window.sessionStorage.getItem('token');
+        request.setRequestHeader("Authorization", token);
+    },
+    success: function(data) {
+        cnd=data.count;
+        datas=data.data;
+    },
+    error: function(jqXHR){
+        alert("发生错误：" + jqXHR.status);  
+    },     
+    });
+    if(cnd==0) {
+        alert("暂无数据");
+        return;
+    }
 }
-
+//(cnt,term,longitude,latitude,contour_time,station_name2,station_code)
+function contour(){
+    document.getElementById('select_now').style.display='block';
+    var stations=[];
+    var longitude=[];
+    var latitude=[];
+    var station_code=[];
+    var term=[];
+    var contour_time=[];
+    var station_name2=[];
+    var cnt;
+    $.ajax({ 
+        type: "GET",
+        url: Url+"/stations",
+        dataType: "JSON",
+        async:false,
+        beforeSend:function(request) {
+            token = window.sessionStorage.getItem('token');
+            request.setRequestHeader("Authorization", token);
+        },
+        success: function(data) {
+            cnt=data.count;
+            stations=data.stations;
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                var result = eval("("+XMLHttpRequest.responseText+")");
+                       console.log(result.message);
+                    },
+    });
+    for(var i=0;i<cnt;i++)
+    {
+        var code=stations[i]["IAGA CODE"];
+        station_name[code]=stations[i]["Station Name"];
+        station_lon[code]=stations[i]["Geodetic Longitude"];
+        station_lat[code]=stations[i]["Geodetic Latitude"];
+    }
+    send(offset);
+//(cnt,term,longitude,latitude,contour_time,station_name2,station_code)
+    var tr = $("#term").val();
+    var j=0;
+    latitude[j]=station_lat[datas[start_tab]["IAGA CODE"]];
+    longitude[j]=station_lon[datas[start_tab]["IAGA CODE"]]-180;
+    station_name2[j]=station_name[datas[start_tab]["IAGA CODE"]];
+    term[j]=datas[start_tab][tr];
+    contour_time[j]=format(datas[start_tab]["time_stamp"]*1000);
+    station_code[j]=datas[start_tab]["IAGA CODE"];
+    j++;
+    for(var i=1;i<cnd;i++,j++){
+        if(datas[i]["time_stamp"]==datas[i-1]["time_stamp"]){
+            latitude[j]=station_lat[datas[i]["IAGA CODE"]];
+            longitude[j]=station_lon[datas[i]["IAGA CODE"]]-180;
+            station_name2[j]=station_name[datas[i]["IAGA CODE"]];
+            term[j]=datas[i][tr];
+            contour_time[j]=format(datas[i]["time_stamp"]*1000);
+            station_code[j]=datas[i]["IAGA CODE"];
+        }else{
+            end_tab=i-1;
+            break;
+        }
+    }
+     contour_1(j,term,longitude,latitude,contour_time,station_name2,station_code);
+}
+function right_btn(){
+    var flag=0;
+    var stamp_bef;
+    var longitude=[];
+    var latitude=[];
+    var station_code=[];
+    var term=[];
+    var contour_time=[];
+    var station_name2=[];
+    if($("#now_date").val()==$("#endtime1").val()&&$("#now_time").val()==$("#endtime2").val()){// end time
+        return;
+    }else{
+        start_tab=end_tab+1;
+        var j=0;
+        var tr = $("#term").val();
+        stamp_bef=datas[start_tab]["time_stamp"];
+        var now=format(stamp_bef*1000).split(" ");
+        $("#now_date").val(now[0]);
+        $("#now_time").val(now[1]);
+        console.log(offset);
+        latitude[j]=station_lat[datas[start_tab]["IAGA CODE"]];
+        longitude[j]=station_lon[datas[start_tab]["IAGA CODE"]]-180;
+        station_name2[j]=station_name[datas[start_tab]["IAGA CODE"]];
+        term[j]=datas[start_tab][tr];
+        contour_time[j]=format(datas[start_tab]["time_stamp"]*1000);
+        station_code[j]=datas[start_tab]["IAGA CODE"];
+        j++;
+        for(var i=start_tab+1;i<cnd;i++,j++){
+            if(datas[i]["time_stamp"]==datas[i-1]["time_stamp"]){
+                latitude[j]=station_lat[datas[i]["IAGA CODE"]];
+                longitude[j]=station_lon[datas[i]["IAGA CODE"]]-180;
+                station_name2[j]=station_name[datas[i]["IAGA CODE"]];
+                term[j]=datas[i][tr];
+                contour_time[j]=format(datas[i]["time_stamp"]*1000);
+                station_code[j]=datas[i]["IAGA CODE"];
+            }else{
+                flag=1;
+                end_tab=i-1;
+                break;
+            }
+        }
+        if(!flag){
+            offset+=1000;
+            send(offset);
+            console.log(offset);
+            if(datas[0]["time_stamp"]==stamp_bef){
+                for(var i=0;i<cnd;i++,j++){
+                    if(datas[i]["time_stamp"]==datas[i-1]["time_stamp"]){
+                        latitude[j]=station_lat[datas[i]["IAGA CODE"]];
+                        longitude[j]=station_lon[datas[i]["IAGA CODE"]]-180;
+                        station_name2[j]=station_name[datas[i]["IAGA CODE"]];
+                        term[j]=datas[i][tr];
+                        contour_time[j]=format(datas[i]["time_stamp"]*1000);
+                        station_code[j]=datas[i]["IAGA CODE"];
+                    }else{
+                        flag=1;
+                        start_tab=0;
+                        end_tab=i-1;
+                        break;
+                    }
+                }
+            }else{
+                start_tab=0;
+                end_tab=-1;
+            }
+            
+        }
+     contour_1(j,term,longitude,latitude,contour_time,station_name2,station_code);
+    }
+}
 function line(){
     TESTER = document.getElementById('Section1');
     TESTER.innerHTML=" ";
@@ -263,24 +381,18 @@ function line(){
     });
     $(".term_name").html("磁分量"+$("#term").val());
 }
+
 function Logoutbtn(){
     sessionStorage.removeItem("token");
     window.location.href='login.html';
-
 }
 $(document).ready(function(){
-    token = window.sessionStorage.getItem('token');
-    if(token==null){
-        document.getElementById("login-btn-top").style.display="block";
-        window.location.href='login.html';
-    }else {
-        document.getElementById("logout-btn-top").style.display="block";
-    }
-
     $("#search").click(function(){
         document.getElementById("contour_table").style.display="none";
-        if($("#graph").val()=="contour")
+        if($("#graph").val()=="contour"){
             contour();
+            window.setInterval(right_btn, 50); 
+        }
         else 
             line();
     });

@@ -4,6 +4,7 @@
         <title>DataVisualization</title>
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
         <meta content="utf-8" http-equiv="encoding">
+        <script src="js/cjin.js" type="text/javascript"></script>
         <script src="js/jquery-2.1.1.min.js" type="text/javascript"></script>
         <script src="js/bootstrap.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="js/jonthornton-jquery-timepicker/jquery.timepicker.js"></script>
@@ -23,7 +24,6 @@
         <script src="js/plotly-latest.min.js" type="text/javascript"></script>
         <link rel="stylesheet" type="text/css" href="css/style.css" /> 
         <script src="js/display.js" type="text/javascript"></script>
-        <script src="js/token.js" type="text/javascript"></script>
     </head>
     
     <body>
@@ -45,14 +45,9 @@
                         </a>
                     </div>
                     <div class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav"></ul>
-                        <ul class="nav navbar-nav navbar-right" id="logout-btn-top" style="display:none;">
+                        <ul class="nav navbar-nav navbar-right" id="logout-btn-top">
                             <li><a href="javascript:void(0)" onclick="Logoutbtn()">
                             <i class="fa fa-fw fa-sign-in"></i>Logout</a></li>
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right" id="login-btn-top" style="display:none;">
-                            <li><a href="login.html">
-                            <i class="fa fa-fw fa-sign-in"></i>Login</a></li>
                         </ul>
                     </div>
                 </div>
@@ -116,17 +111,13 @@
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                         <div class="pull-left">
-                                            <label class="control-label"><span>Magnetic Component</span></label>
+                                            <label class="control-label"><span>Reported Type</span></label>
                                         </div>
 
                                         <div class="Select Select--single is-searchable has-value">
                                             <div class="Select-control">
                                                 <div class="Select-input">
-                                                    <select class="Select-input" id='term' name='term' autocomplete="off">
-                                                    <option selected="selected" value='X'>X</option>
-                                                    <option value='Y'>Y</option>
-                                                    <option value='Z'>Z</option>
-                                                    <option value='F'>F</option>
+                                                    <select class="Select-input" id='reported_type' name='reported_type' autocomplete="off" onchange="reportedTerm()">
                                                     </select>
                                                 </div>
                                             </div>
@@ -135,6 +126,25 @@
                                 </div>
                             </div>
 
+                            <div class="panel-body">
+                                <div class="row space-1">
+                                    <div class="col-lg-12 col-xs-12">
+                                        <div class="pull-left">
+                                            <label class="control-label"><span>Magnetic Component</span></label>
+                                        </div>
+
+                                        <div class="Select Select--single is-searchable has-value">
+                                            <div class="Select-control">
+                                                <div class="Select-input">
+                                                    <select class="Select-input" id='term' name='term' autocomplete="off">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script type="text/javascript" src="js/type_term.js"></script>
                             <div class="panel-body">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
@@ -222,7 +232,7 @@
             <!-- data and chart part -->
             <div class="col-sm-8">
                 <div class="chart-container">
-                    <div class="panel panel-default" style="height: 700.05px;">
+                    <div class="panel panel-default" style="min-height: 601px;">
                         <div class="col-md-offset-2 col-md-8" id="date-mid-2">
                             <div class="tab" role="tabpanel">
                                 <ul class="nav nav-tabs" role="tablist">
@@ -235,7 +245,19 @@
                                 </ul>
                                 <div class="tab-content tabs">
                                     <!-- graph  absent-->
-                                    <div role="tabpanel" class="tab-pane fade in active" id="Section1"></div>
+                                    <div role="tabpanel" class="tab-pane fade in active" id="Section1">
+                                        <div class="Select-input" id="select_now" style="display: none">
+                                            <div id="Timeselection_1" class="Select-time">
+                                                <a class="arrow_contour" href="javascript:void(0)" onclick="left_btn()"><i class="fa fa-arrow-circle-left"></i></a>
+                                                <input type="text" id="now_date" value="" autocomplete="off"/>
+                                                <input type="text" id="now_time" value="" autocomplete="off"/>
+                                                <a class="arrow_contour" href="javascript:void(0)" onclick="right_btn()"><i class="fa fa-arrow-circle-right"></i></a>
+                                                <script type="text/javascript" src="js/select-1.js"></script>
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <div id="chart-part"></div>
+                                    </div>
                                     <!-- data list absent-->
                                     <div role="tabpanel" class="tab-pane fade" id="Section2">
                                     <div class="datalist-1">
@@ -248,6 +270,7 @@
                                 <script src="js/plot.js" type="text/javascript"></script>
                             </div>
                         </div>
+                        <div style="clear:both"></div>
                     </div>
                 </div>
             </div>

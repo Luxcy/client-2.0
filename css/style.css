@@ -111,3 +111,12 @@
     text-decoration: none;
     cursor: pointer;
 }
+#now_date {
+    width: 100px;
+}
+#now_time{
+    width: 100px;
+}
+.arrow_contour{
+    font-size:18px;
+}

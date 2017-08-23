@@ -19,18 +19,19 @@
              dataType:'json',
              success:function(data2){
                 if(data2.error==undefined){
-                    alert("You're almost ready to go! please check your email to activate your account.");
-                    window.location.href="login.html";
+                    document.getElementById("part-one").style.display="none";
+                    document.getElementById("part-two").style.display="block";
+                    $("#b_message").html(data2.message);
                 }else {
                     alert(data2.error);
                 }
              }, 
              error: function(XMLHttpRequest, textStatus, errorThrown) {
-             alert("112231");
-             var result = eval("("+XMLHttpRequest.responseText+")");
-             console.log(result.message);
             }, 
          });
  }); 
+$("#signup-btn2").click(function(){
+    window.location.href='login.html';
+}); 
 
 
