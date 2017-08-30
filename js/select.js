@@ -1,9 +1,9 @@
-$(document).ready(function(){
+
     /*var t=new Date();
     var v=t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate();
     $("#starttime1").val(v);
     $("#endtime1").val(v);*/
-    $("#starttime1").val("2010-1-2");
+    $("#starttime1").val("2010-2-1");
     $("#endtime1").val("2010-4-16");
     $('#Timeselection .time').timepicker({
         'timeFormat': 'g:i:s',
@@ -19,4 +19,3 @@ $(document).ready(function(){
     var defaultDeltaDatepair = new Datepair(ExampleEl, {
         'anchor': null//starttime++ endtime++ yes or no 
     });
-});

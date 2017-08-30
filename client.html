@@ -246,16 +246,18 @@
                                 <div class="tab-content tabs">
                                     <!-- graph  absent-->
                                     <div role="tabpanel" class="tab-pane fade in active" id="Section1">
-                                        <div class="Select-input" id="select_now" style="display: none">
-                                            <div id="Timeselection_1" class="Select-time">
-                                                <a class="arrow_contour" href="javascript:void(0)" onclick="left_btn()"><i class="fa fa-arrow-circle-left"></i></a>
-                                                <input type="text" id="now_date" value="" autocomplete="off"/>
+                                        <div class="Select-input" id="select_now" style="display: block;">
+                                            <div style="display: none;">
+                                                <input id="year" type="range" min="1921" max="2017"/><output></output>
+                                                <input id="year" type="range" min="1" max="12"/> 
+                                                <input id="year" type="range" min="" max=""/>
                                                 <input type="text" id="now_time" value="" autocomplete="off"/>
-                                                <a class="arrow_contour" href="javascript:void(0)" onclick="right_btn()"><i class="fa fa-arrow-circle-right"></i></a>
                                                 <script type="text/javascript" src="js/select-1.js"></script>
                                             </div>
                                         </div>
                                         <br/>
+                                        <input type="button" value="Run" id="run" />
+                                        <input type="button" value="停止" id="stop"/>
                                         <div id="chart-part"></div>
                                     </div>
                                     <!-- data list absent-->

@@ -6,7 +6,7 @@
          //ajax去服务器端校验
          $.ajax({
              type:"POST",
-             url:"http://172.25.88.4:5000/forget_password",
+             url:"http://172.25.88.5:5000/forget_password",
              data:{"email":email},
              dataType:'json',
              success:function(data2){

@@ -1,10 +1,12 @@
-var Url="http://172.25.88.4:5000";
+var Url="http://172.25.88.5:5000";
 function Station_display(str)
 {
-    if(str=="contour")
+    if(str=="contour"){
        document.getElementById("table_stations").style.display="none";
-   else 
-       document.getElementById("table_stations").style.display="block";
+    }
+   else{
+        document.getElementById("table_stations").style.display="block";
+   } 
 }
 function showDivFun(){
     document.getElementById('popSta').style.display='block';

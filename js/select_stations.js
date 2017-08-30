@@ -1,4 +1,8 @@
 //select stations plot
+var stationName=[];
+var stationLon=[];
+var stationLat=[];
+
 $(document).ready(function(){
         var station_name=[];
         var longitude=[];
@@ -26,7 +30,16 @@ $(document).ready(function(){
             error: function(){
                 //alert("please login");  
             },     
-        });    
+        });
+        
+        for(var i=0;i<cnt;i++)
+        {
+            var code=stations[i]["IAGA CODE"];
+            stationName[code]=stations[i]["Station Name"];
+            stationLon[code]=stations[i]["Geodetic Longitude"];
+            stationLat[code]=stations[i]["Geodetic Latitude"];
+        }
+
         station_name= stations.map(function(v){return v["Station Name"];});
         longitude=stations.map(function(v){return v["Geodetic Longitude"]-180;});
         latitude=stations.map(function(v){return v["Geodetic Latitude"];});
@@ -103,4 +116,3 @@ $(document).ready(function(){
           }
         });
 });
-
