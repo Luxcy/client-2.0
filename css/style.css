@@ -6,11 +6,6 @@
 	padding-right: 10px;
 	width: 100%;
 }
-#stations{
-	border: 1px solid #ccc;
-	border-radius:4px;
-	width: 97%;
-}
 .tab{
     margin-top: 30px;
 }
@@ -111,12 +106,20 @@
     text-decoration: none;
     cursor: pointer;
 }
-#now_date {
-    width: 100px;
-}
-#now_time{
-    width: 100px;
-}
 .arrow_contour{
     font-size:18px;
+}
+.loading{
+    width: 972px;
+    height: 560px;
+    background-color: white;
+    position: absolute;
+    left: -9.5%;
+    z-index: 2;
+}
+.spanValue{
+    width: 70px;
+}
+.btn-2{
+    float: right;
 }

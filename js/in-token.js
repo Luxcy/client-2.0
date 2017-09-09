@@ -12,7 +12,7 @@
              type:"POST",
              url:"http://172.25.88.5:5000/login",
              data:{"email":email,"password":password},
-             dataType:'json',
+             dataType:'JSON',
              success:function(data2){
                 console.log(data2);
                  if(data2.result=='error'){
