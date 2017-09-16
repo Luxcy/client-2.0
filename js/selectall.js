@@ -182,13 +182,15 @@ function Station_display(str,str1)
     }
     if(str=="contour"){
         document.getElementById("table_stations"+num).style.display="none";
-        document.getElementById("single_time"+num).style.display="block";
+        document.getElementById("searchpart"+num).style.display="none";
         document.getElementById("double_time"+num).style.display="none";
+        document.getElementById("select_timespan"+num).style.display="block";
    }
    else{
         document.getElementById("table_stations"+num).style.display="block";
-        document.getElementById("single_time"+num).style.display="none";
+        document.getElementById("searchpart"+num).style.display="block";
         document.getElementById("double_time"+num).style.display="block";
+        document.getElementById("select_timespan"+num).style.display="none";
    } 
 }
 function showDivFun(str1){
@@ -256,19 +258,19 @@ function spancell(str1){
         document.getElementById("spanCell"+num).options.length=5;
     }
 }
-//timepicker single
-function timesingle(num){
-    $("#starttimeaa"+num).val("2010-2-1");
-    $('#starttimebb'+num).timepicker({
-        'timeFormat': 'g:i:s',
-        'step':15
-    });
+// //timepicker single
+// function timesingle(num){
+//     $("#starttimeaa"+num).val("2010-2-1");
+//     $('#starttimebb'+num).timepicker({
+//         'timeFormat': 'g:i:s',
+//         'step':15
+//     });
 
-    $('#starttimeaa'+num).datepicker({
-        'format': 'yyyy-m-d',
-        'autoclose': true
-    });
-}
+//     $('#starttimeaa'+num).datepicker({
+//         'format': 'yyyy-m-d',
+//         'autoclose': true
+//     });
+// }
 //timepicker double
 function timedouble(num){
     $("#starttimea"+num).val("2010-2-1");
@@ -410,12 +412,169 @@ function staionGraph(num){
             });
         });  
 };
+// year month day slider
+function dvalue(y,m){
+    if(m==1 || m==3 || m==5 || m==7 || m==8 || m==10 || m==12)
+        return 31;
+    else if(m==4 || m==6 || m==9 || m==11)
+        return 30;
+    else{
+        var flag = (y % 4 == 0)&& (y % 100 != 0) || (y % 400 == 0);
+        if(flag) return 29;
+        else return 28;
+    }
+}
+function dd(num,maxd,value){
+    $("#daya"+num).val(value);
+    $("#day"+num).slider({
+      min:1,
+      max:maxd,
+      range:"min",
+      value:value,
+      slide:function(event,ui){
+        $("#daya"+num).val(ui.value);
+      },
+      stop:function(event,ui){
+        contourOne(num);
+      }
+    });
+}
+function mm(num,y){
+    var mind = $("#montha"+num).val();
+    $( "#month"+num ).slider({
+      min:1,
+      max:12,
+      range:"min",
+      value:mind,
+      slide:function(event,ui){
+        $("#montha"+num).val(ui.value);
+        var maxd = dvalue(y,ui.value);
+        var d = $("#daya"+num).val();
+        if(d>maxd) d = maxd;
+        dd(num,maxd,d);
+      },
+      stop:function(event,ui){
+        contourOne(num);
+      }
+    });
+    var maxd = dvalue(y,$("#month"+num).slider("value"));
+    var d = $("#daya"+num).val();
+    if(d>maxd) d = maxd;
+    dd(num,maxd,d);
+}
+function yy(num){
+    var y = new Date();
+    var maxy = y.getFullYear();
+    var miny=1921;
+    var minm=1;
+    var mind=1;
+    $( "#year"+num ).slider({
+      min:miny,
+      max:maxy,
+      range:"min",
+      value:miny,
+      slide:function(event,ui){
+        $("#yeara"+num).val(ui.value);
+        mm(num,ui.value);
+      },
+      stop:function(event,ui){
+        contourOne(num);
+      }
+    });
+    $("#yeara"+num).val(miny);
+    $("#montha"+num).val(minm);
+    $("#daya"+num).val(mind);
+    mm(num,$("#year"+num).slider("value"));
+}
+
+function yinput(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    var maxy = new Date().getFullYear();
+    var y=$("#yeara"+num).val();
+    var miny = 1921;
+    if(y>=miny&&y<=maxy){
+        $("#year"+num).slider("value",y);
+
+        var maxd = dvalue(y,$("#montha"+num).val());
+        var d = $("#daya"+num).val();
+        if(d>maxd) d = maxd;
+        dd(num,maxd,d);
+
+        contourOne(num);
+    }
+    else{
+        $("#yeara"+num).val(miny);
+        $("#year"+num).slider("value",miny);
+        alert("please input value between "+miny+" to "+maxy);
+    }
+
+}
+
+function minput(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    var maxm = 12;
+    var m=$("#montha"+num).val();
+    var minm = 1;
+    if(m>=minm&&m<=maxm){
+        $("#month"+num).slider("value",m);
+
+        var maxd = dvalue($("#yeara"+num).val(),m);
+        var d = $("#daya"+num).val();
+        if(d>maxd) d = maxd;
+        dd(num,maxd,d);
+
+        contourOne(num);
+    }
+    else{
+        $("#montha"+num).val(minm);
+        $("#month"+num).slider("value",minm);
+        alert("please input value between "+minm+" to "+maxm);
+    }
+}
+
+function dinput(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    var maxd = dvalue($("#yeara"+num).val(),$("#montha"+num).val());
+    var d=$("#daya"+num).val();
+    var mind = 1;
+    if(d>=mind&&d<=maxd){
+        $("#day"+num).slider("value",d);
+        contourOne(num);
+    }
+    else{
+        $("#daya"+num).val(mind);
+        $("#day"+num).slider("value",mind);
+        alert("please input value between "+mind+" to "+maxd);
+    }
+}
+// hhmmss part
+function hhmmss(num){
+    $('#hhmmss'+num).timepicker({
+        'timeFormat': 'g:i:s',
+        'step':15
+    });
+}
+// init
 function init_select(num){
     term(num);
-    timesingle(num);
+    hhmmss(num);
     timedouble(num);
     staionGraph(num);
     source(num);
-    timeistp(num)
+    timeistp(num); 
+    yy(num);
+
 }
 init_select(0);

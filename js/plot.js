@@ -96,12 +96,15 @@ var steps = [];
 var MINTIME;
 var PLAYBTN=0;
 
-function contourOne(num){
+function initCon(num){
     steps = [];
     frames = [];
     NUM = 0;
-    MINTIME = $("#starttimeaa"+num).val()+" "+$("#starttimebb"+num).val();
+    MINTIME = $("#yeara"+num).val()+"-"+$("#montha"+num).val()+"-"+$("#daya"+num).val()+" "+$("#hhmmss"+num).val();
+}
 
+function contourOne(num){
+    initCon(num);
     var longitude = [];
     var latitude = [];
     var station_code = [];
@@ -111,7 +114,7 @@ function contourOne(num){
     var cnt;
     var datas = [];
     var data = [];
-
+    document.getElementById("loading"+num).style.display="block";
     $.when(send(MINTIME,num)).done(function(data){
         document.getElementById("loading"+num).style.display="none";
         datas = data.data;
@@ -592,10 +595,7 @@ function run(str1){
             //play(num);  
         }else {
             PLAYBTN=0;
-            steps = [];
-            frames = [];
-            NUM = 0;
-            MINTIME = $("#starttimeaa"+num).val()+" "+$("#starttimebb"+num).val();
+            initCon(num);
             globalID[num]=self.setInterval("play("+num+")",500);
         }
         SPANVALUE = $("#spanValue"+num).val();

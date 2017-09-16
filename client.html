@@ -343,7 +343,7 @@
                                 </div>
                             </div>
 
-                            <div class="panel-body"  id="single_time0" style="display:block;">
+<!--                             <div class="panel-body"  id="single_time0" style="display:block;">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                         <div class="pull-left">
@@ -362,7 +362,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
 
                             <div class="panel-body"  id="double_time0" style="display:none;">
@@ -389,7 +389,7 @@
                                 </div>
                             </div>
 
-                            <div class="panel-body">
+                            <div class="panel-body" id="searchpart0" style="display: none">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                         <div class="Select Select--single is-searchable has-value">
@@ -405,9 +405,9 @@
                  </div>
             </div>
 
-            <script type="text/javascript" src="js/selectall.js"></script>
-            <button onclick="addK()">add</button>
-            <button onclick="removeK()">remove</button>
+            <!-- <script type="text/javascript" src="js/selectall.js"></script> -->
+       <!--     <button onclick="addK()">add</button>
+            <button onclick="removeK()">remove</button> -->
             <!-- data and chart part -->
             <div class="col-sm-8">
                 <div class="chart-container">
@@ -425,7 +425,17 @@
                                 <div class="tab-content tabs">
                                     <!-- graph  absent-->
                                     <div role="tabpanel" class="tab-pane fade in active" id="Section1" style="position: relative;">
-                                        <div id="select_timespan0" style="display: none;">
+                                        <div id="select_timespan0" style="display: block;">
+                                            <label class="control-label"><input type="text" id="yeara0" onchange="yinput(this.id)"/><span>year</span></label>
+                                            <p id="year0"></p>
+                                            <label class="control-label"><input type="text" id="montha0" onchange="minput(this.id)"/><span>month</span></label>
+                                            <p id="month0"></p>
+                                            <label class="control-label"><input type="text" id="daya0" onchange="dinput(this.id)"/><span>day</span></label>
+                                            <p id="day0"></p>
+                                            <div id="hhmmsspart0">
+                                                <span>hh-mm-ss</span>
+                                                <input type="text" id="hhmmss0" value="00:00:00" autocomplete="off"/>
+                                            </div>
                                             <label class="control-label"><span>Time Span</span></label>&nbsp;&nbsp;
                                             <input type="text" class="spanValue" id="spanValue0" name="span_value" autocomplete="off"/>
                                             <select id='spanCell0' name='timespan' autocomplete="off">
@@ -452,14 +462,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <script src="js/plot.js" type="text/javascript"></script>
                             </div>
                         </div>
                         <div style="clear:both"></div>
                     </div>
                 </div>
             </div>
+            <script type="text/javascript" src="js/selectall.js"></script>
             <script type="text/javascript" src="js/selectadd.js"></script>
+            <script src="js/plot.js" type="text/javascript"></script>
         </div>
     </body>
 </html>
