@@ -1,16 +1,15 @@
 //istp iaga part
-function Iait_display(str,str1){
-    var num = "";
-    for(var i=0;i<str1.length;i++){
-        if(str1[i]>='0'&&str1[i]<='9')
-            num+=str1[i];
-    }
+function Iait_display(str){
     if(str=="iaga"){
-        document.getElementById("iaga"+num).style.display="block";
-        document.getElementById("istp"+num).style.display="none";
+        document.getElementById("iaga").style.display="block";
+        document.getElementById("graph_iaga").style.display="block";
+        document.getElementById("table_iaga").style.display="block";
+        document.getElementById("istp").style.display="none";
     }else{
-        document.getElementById("istp"+num).style.display="block";
-        document.getElementById("iaga"+num).style.display="none";
+        document.getElementById("istp").style.display="block";
+        document.getElementById("iaga").style.display="none";
+        document.getElementById("graph_iaga").style.display="none";
+        document.getElementById("table_iaga").style.display="none";
     }
 }
 // variables select  /istp/data_sets/{data_set}/variables
@@ -143,7 +142,7 @@ function source(num){
             datas=data.sources;
             document.getElementById("sources"+num).options.length=0;
             for(var i=0;i<datas.length;i++)
-                document.getElementById("sources"+num).options.add(new Option(datas[i]["Source_name"],datas[i]["Source_name"]));
+                document.getElementById("sources"+num).options.add(new Option(datas[i]["full_Source_name"],datas[i]["Source_name"]));
         },
         error: function(jqXHR){
             alert("error：" + jqXHR.status);  
@@ -182,13 +181,13 @@ function Station_display(str,str1)
     }
     if(str=="contour"){
         document.getElementById("table_stations"+num).style.display="none";
-        document.getElementById("searchpart"+num).style.display="none";
+        document.getElementById("searchpart").style.display="none";
         document.getElementById("double_time"+num).style.display="none";
         document.getElementById("select_timespan"+num).style.display="block";
    }
    else{
         document.getElementById("table_stations"+num).style.display="block";
-        document.getElementById("searchpart"+num).style.display="block";
+        document.getElementById("searchpart").style.display="block";
         document.getElementById("double_time"+num).style.display="block";
         document.getElementById("select_timespan"+num).style.display="none";
    } 
@@ -258,19 +257,6 @@ function spancell(str1){
         document.getElementById("spanCell"+num).options.length=5;
     }
 }
-// //timepicker single
-// function timesingle(num){
-//     $("#starttimeaa"+num).val("2010-2-1");
-//     $('#starttimebb'+num).timepicker({
-//         'timeFormat': 'g:i:s',
-//         'step':15
-//     });
-
-//     $('#starttimeaa'+num).datepicker({
-//         'format': 'yyyy-m-d',
-//         'autoclose': true
-//     });
-// }
 //timepicker double
 function timedouble(num){
     $("#starttimea"+num).val("2010-2-1");
@@ -566,15 +552,59 @@ function hhmmss(num){
         'step':15
     });
 }
+//right_down part
+function down_right(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    document.getElementById("iaga_right"+num).style.display="";
+    document.getElementById("iaga_down"+num).style.display="none";
+    $("#iaga_others"+num).hide(1000);
+}
+function right_down(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    document.getElementById("iaga_right"+num).style.display="none";
+    document.getElementById("iaga_down"+num).style.display="";
+    $("#iaga_others"+num).show(1000);
+}
+//right_down istp part
+function down_istp(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    document.getElementById("istp_right"+num).style.display="";
+    document.getElementById("istp_down"+num).style.display="none";
+    $("#istp_others"+num).hide(1000);
+}
+function right_istp(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    document.getElementById("istp_right"+num).style.display="none";
+    document.getElementById("istp_down"+num).style.display="";
+    $("#istp_others"+num).show(1000);
+}
 // init
-function init_select(num){
+function init_iaga(num){
     term(num);
     hhmmss(num);
     timedouble(num);
     staionGraph(num);
+    yy(num);
+}
+function init_istp(num){
     source(num);
     timeistp(num); 
-    yy(num);
-
 }
-init_select(0);
+init_istp(0);
+init_iaga(0);

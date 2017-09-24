@@ -6,6 +6,12 @@
 	padding-right: 10px;
 	width: 100%;
 }
+.Select{
+    clear: both;
+}
+.pull-left{
+    width: 100%;
+}
 .tab{
     margin-top: 30px;
 }
@@ -120,6 +126,45 @@
 .spanValue{
     width: 70px;
 }
-.btn-2{
+.fa.fa-pause{
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+.fa.fa-play{
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+.fa.fa-angle-double-down{
+    cursor: pointer;
+}
+.fa.fa-angle-double-right{
+    cursor: pointer;
+}
+.fa.fa-plus-square-o{
+    cursor: pointer;
+}
+.fa.fa-minus-square-o{
+    cursor: pointer;
+}
+.slider{
+    width: 400px;
+    height: 5px;
+}
+.timeinput{
+    width: 35%;
+}
+.timeyy{
+    width: 80px;
+    height: 50px;
+}
+th{
+    font-weight: normal;
+}
+.fa.fa-plus-square-o{
+    float: right;
+}
+.fa.fa-minus-square-o{
     float: right;
 }

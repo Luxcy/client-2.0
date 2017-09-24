@@ -11,46 +11,67 @@ function findall(o,num){
     }
 }
 function copy(name,num,id){
-    var sourceNode = document.getElementById(name+num);
-     var clonedNode = sourceNode.cloneNode(true); // 克隆节点
-     num += 1; 
+    var sourceNode = document.getElementById(name+0);
+    var clonedNode = sourceNode.cloneNode(true); // 克隆节点
+    num += 1; 
     var vbn = name + num; 
     clonedNode.setAttribute("id",vbn);
 
     var o = clonedNode.childNodes;
     findall(o,num);
-    document.getElementById(id).appendChild(clonedNode);
+    // if(name=="iaga_part"){
+    //     var node = document.getElementById(id)
+    //     node.insertBefore(clonedNode,node.childNodes[0]);
+    // }else{
+        document.getElementById(id).appendChild(clonedNode);
+ //   }
    // sourceNode.parentNode.appendChild(clonedNode); 
 }
-function addK(){
-    copy("selection_part",SelectNum,"all");
+function addiaga(){
+    //copy("iaga_part",SelectNum,"searchpart0");
+    copy("iaga_part",SelectNum,"part_iaga");
     copy("popSta",SelectNum,"all");
-    copy("select_timespan",SelectNum,"Section1");
-    copy("loading",SelectNum,"Section1");
-    //copy2("chart-part",SelectNum,"Section1");
-    //copy2("tablepart",SelectNum,"Section2");
+    copy("select_timespan",SelectNum,"graph_iaga");
+    copy("loading",SelectNum,"graph_iaga");
     SelectNum = SelectNum + 1;
-    $("#Section1").append('<div id="chart-part'+SelectNum+'"></div>')
+    $("#graph_iaga").append('<div id="chart-part'+SelectNum+'"></div>')
 
     var html='<div id="tablepart'+SelectNum+'" style="display:none;">'
              +'<table id="contour_table'+SelectNum+'" class="cell-border" cellspacing="0" width="100%">' 
              +'<tbody id="table'+SelectNum+'"></tbody>' 
              +'</table>' 
              +'</div>';
-    $("#Section2").append(html);
-    //SelectNum = SelectNum + 1;
-    document.getElementById("table_stations"+SelectNum).style.display="none";
-    init_select(SelectNum);
-    $("#selection_part"+SelectNum).css({"top": "75.4px", "left": "667px","position":"absolute","z-index":"3"});
-    $("#selection_part"+SelectNum).draggable();
+    $("#table_iaga").append(html);
+    document.getElementById("table_stations"+SelectNum).style.display = "none";
+    document.getElementById("riaga"+SelectNum).style.display = "";
+    init_iaga(SelectNum);
 }
-function removeK(){
-    if(SelectNum==0) return;
-    $("#selection_part"+SelectNum).remove();
-    $("#popSta"+SelectNum).remove();
-    $("#select_timespan"+SelectNum).remove();
-    $("#loading"+SelectNum).remove();
-    $("#chart-part"+SelectNum).remove();
-    $("#tablepart"+SelectNum).remove();
-    SelectNum -= 1;
+function removeiaga(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    $("#iaga_part"+num).remove();
+    $("#popSta"+num).remove();
+    $("#select_timespan"+num).remove();
+    $("#loading"+num).remove();
+    $("#chart-part"+num).remove();
+    $("#tablepart"+num).remove();
+}
+function addistp(){
+    copy("istp_part",SelectNum,"part_istp");
+    //copy("loading",SelectNum,"Section1");
+    SelectNum = SelectNum + 1;
+    document.getElementById("ristp"+SelectNum).style.display = "";
+    init_istp(SelectNum);
+}
+function removeistp(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    $("#istp_part"+num).remove();
+    //$("#loading"+num).remove();
 }

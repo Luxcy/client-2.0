@@ -1,11 +1,3 @@
-// function spancell(){
-//     if($("#sample_rate").val() == 'sec'){
-//         document.getElementById("spanCell").options.add(new Option("second",'s'));
-//     }else{
-//         document.getElementById("spanCell").options.length=5;
-//     }
-// }
-
 function add0(m){return m<10?'0'+m:m }
 // stamp*1000 --->  string 
 function format(stamp)
@@ -172,9 +164,6 @@ function contourOne(num){
             y: frames[NUM-1].data[0].y,
             z: frames[NUM-1].data[0].z,
             text:frames[NUM-1].data[0].text,
-            // lines:{
-            //     width:0,
-            // }
         }
         var trace3 = {
             x: longitude,
@@ -188,9 +177,8 @@ function contourOne(num){
             showlegend:false,
         };
         var data = [trace2,trace1,trace3];
-        //var data = [trace2];
         var layout = {
-            title:contour_time[0],
+            title:"Time : "+MINTIME,
             height:573,
             xaxis:{
                 range:[-180,180],
@@ -206,60 +194,8 @@ function contourOne(num){
                 mirror:'ticks',
                 ticks:'inside'
             },
-            // sliders: [{
-            //     active: 0,
-            //     steps:steps,
-            //     x: 0.1,
-            //     len: 0.9,
-            //     xanchor: "left",
-            //     y: 0,
-            //     yanchor: "top",
-            //     pad: {t: 50, b: 10},
-            //     currentvalue: {
-            //         visible: true,
-            //         prefix: "Time:",
-            //         xanchor: "right",
-            //         font: {
-            //         size: 20,
-            //         color: "#666"
-            //         }
-            //     },
-            //     transition: {
-            //         duration: 300,
-            //         easing: "cubic-in-out"
-            //     }
-            // }],
-            // updatemenus: [{
-            //     type: 'buttons',
-            //     showactive: false,
-            //     x: 0.05,
-            //     y: 0,
-            //     xanchor: 'right',
-            //     yanchor: 'top',
-            //     direction: 'left',
-            //     pad: {t: 60, r: 20},
-            //     buttons: [{
-            //         label: 'Play',
-            //         method: 'animate',
-            //         args: [null, {
-            //         fromcurrent: true,
-            //         frame: {redraw: true, duration: 1000},
-            //         transition: {duration: 500}
-            //     }]},{
-            //         label: 'Pause',
-            //         method: 'animate',
-            //         args: [[null], {
-            //         mode: 'immediate',
-            //         frame: {redraw: true, duration: 0}
-            //         }]
-            //     }]
-            // }]
         };
         Plotly.newPlot('chart-part'+num, data, layout,{displayModeBar:false});
-        // Plotly.newPlot('chart-part'+num, data, layout,{displayModeBar:false}).then(function() {
-        //     Plotly.addFrames('chart-part'+num, frames); 
-        // });
-
 
         //==================================================================================
         $('#contour_table'+num).html("");
@@ -317,7 +253,6 @@ var globalID=[];
 function timeadd(num){
     var d = new Date(Date.parse(MINTIME.replace(/-/g, "/")));
     d.add($("#spanCell"+num).val(),$("#spanValue"+num).val());
-    //d.add('d',1);
     MINTIME=d.format();
 }
 function play(num){
@@ -388,9 +323,6 @@ function play(num){
             y: frames[NUM-1].data[0].y,
             z: frames[NUM-1].data[0].z,
             text:frames[NUM-1].data[0].text,
-            // lines:{
-            //     width:0,
-            // }
         }
         var trace3 = {
             x: longitude,
@@ -425,52 +357,7 @@ function play(num){
         };
 
         Plotly.newPlot('chart-part'+num, data, layout,{displayModeBar:false});
-        //globalID[num]=requestAnimationFrame(play); 
         timeadd(num);
-        // var data=frames[NUM-1].data[0];
-        // var layout={
-        //         sliders: [{
-        //             active:NUM-1,
-        //             steps:steps,
-        //         }],
-        //         transition: {
-        //             duration: 0,
-        //         },
-        //         frame: {
-        //           duration: 0,
-        //           redraw: false,
-        //         },
-        //         // updatemenus: [{
-        //         //     type: 'buttons',
-        //         //     showactive: false,
-        //         //     x: 0.05,
-        //         //     y: 0,
-        //         //     xanchor: 'right',
-        //         //     yanchor: 'top',
-        //         //     direction: 'left',
-        //         //     pad: {t: 60, r: 20},
-        //         //     buttons: [{
-        //         //         label: 'Play',
-        //         //         method: 'animate',
-        //         //         args: [null, {
-        //         //         fromcurrent: true,
-        //         //         frame: {redraw: true, duration: 1000},
-        //         //         transition: {duration: 500}
-        //         //     }]},{
-        //         //         label: 'Pause',
-        //         //         method: 'animate',
-        //         //         args: [[null], {
-        //         //         mode: 'immediate',
-        //         //         frame: {redraw: true, duration: 0}
-        //         //         }]
-        //         //     }]
-        //         // }]
-        //     };
-        // Plotly.animate('chart-part'+num, {data,layout},{displayModeBar:false}).then(function() {
-        //     Plotly.addFrames('chart-part'+num, frames); 
-        // }); 
-        // globalID=requestAnimationFrame(play); 
-
         //========================================================================
         var add=[];
         for(var i=0;i<cnt;i++){
@@ -481,6 +368,7 @@ function play(num){
     
 }
 function line(num){
+    console.log(num);
     TESTER = document.getElementById('chart-part'+num);
     TESTER.innerHTML=" ";
     var x=[];
@@ -577,6 +465,7 @@ var SPANCELL="";
 var SPANVALUE="";
 function run(str1){
     var num = "";
+    var flag = 0;
     for(var i=0;i<str1.length;i++){
         if(str1[i]>='0'&&str1[i]<='9')
             num+=str1[i];
@@ -588,11 +477,12 @@ function run(str1){
     if($("#spanValue"+num).val() == ""){
         alert("please input value.");
     }else {
+        document.getElementById("run0").style.display="none";
+        document.getElementById("stop0").style.display="";
         if(SPANVALUE == $("#spanValue"+num).val()&&SPANCELL == $("#spanCell"+num).val()){
             PLAYBTN=0;
             timeadd(num);
             globalID[num]=self.setInterval("play("+num+")",500);
-            //play(num);  
         }else {
             PLAYBTN=0;
             initCon(num);
@@ -604,6 +494,8 @@ function run(str1){
 
 }
 function stop(str1){
+    document.getElementById("run0").style.display="";
+    document.getElementById("stop0").style.display="none";
     var num = "";
     for(var i=0;i<str1.length;i++){
         if(str1[i]>='0'&&str1[i]<='9')
@@ -619,22 +511,19 @@ function Logoutbtn(){
     window.location.href='login.html';
 }
 
-function search(str1){
-    var num = "";
-    for(var i=0;i<str1.length;i++){
-        if(str1[i]>='0'&&str1[i]<='9')
-            num+=str1[i];
-    }
-    document.getElementById("tablepart"+num).style.display="none";
-    document.getElementById("loading"+num).style.display="block";
-    if($("#graph"+num).val()=="contour"){
-        document.getElementById("select_timespan"+num).style.display="block";
-        contourOne(num);
-    }
-    else{
-        document.getElementById("select_timespan"+num).style.display="none";
-        line(num);
-    }
+function search(){
+
+    for(var num=0;num<=SelectNum;num++)
+    {
+        if($("#iaga_part"+num).length>0){
+            //console.log(num);
+
+            document.getElementById("tablepart"+num).style.display="none";
+            document.getElementById("loading"+num).style.display="block";
+            document.getElementById("select_timespan"+num).style.display="none";
+            line(num);
+        }
+    }   
 }
 // $(document).ready(function(){
 //     $("#search").click(function(){

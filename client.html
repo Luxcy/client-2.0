@@ -58,10 +58,10 @@
     
         <div class="row">
             <!-- selection part -->
-            <div class="col-sm-4" id="selection_part0">
-                <div class="scrollbar-container" id="iaga">
+            <div class="col-sm-4">
+                <div class="scrollbar-container">
                     <div class="scrollbar-content">
-                        <div class="control-panel-section panel panel-default">
+                        <div id="select_part" class="control-panel-section panel panel-default">
                             
                             <div class="panel-heading">
                                 <div class="panel-title">Select options</div>
@@ -76,7 +76,7 @@
                                           <div class="Select Select--single is-searchable has-value">
                                              <div class="Select-control">
                                                  <div class="Select-input">
-                                                      <select class="Select-input" id='datasources0' name='datasource' onchange="Iait_display(this.value,this.id)"autocomplete="off">
+                                                      <select class="Select-input" id='datasources' name='datasource' onchange="Iait_display(this.value)"autocomplete="off">
                                                         <option selected="selected" value='iaga'>iaga</option>
                                                         <option value='istp'>istp</option>
                                                       </select>
@@ -88,15 +88,26 @@
                             </div>
 
                             <!-- istp part-->
-                            <div id="istp0" style="display: none;">
+
+                            <div id="istp" style="display: none;">
                             <div class="panel-heading">
-                                <div class="panel-title">ISTP</div>
+                                <div class="panel-title">
+                                    <i id="aistp" onclick="addistp()" class="fa fa-plus-square-o"></i> 
+                                    ISTP
+                                </div>
                             </div>
+
+                            <div id="part_istp">
+                            <div id="istp_part0">
                             <div class="panel-body">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                           <div class="pull-left">
                                             <label class="control-label"><span>Sources</span></label>
+                                            <i id="istp_down0" class="fa fa-angle-double-down" onclick="down_istp(this.id)"></i>
+                                            <i id="istp_right0" class="fa fa-angle-double-right"
+                                            onclick="right_istp(this.id)" style="display: none"></i>
+                                            <i id="ristp0" onclick="removeistp(this.id)" class="fa fa-minus-square-o" style="display: none;"></i>
                                           </div>
                                           <div class="Select Select--single is-searchable has-value">
                                              <div class="Select-control">
@@ -109,7 +120,7 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <div id="istp_others0">
                             <div class="panel-body">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
@@ -205,6 +216,9 @@
                                     </div>
                                 </div>
                             </div>
+                            </div>
+                            </div>
+                            </div>
 
                             <div class="panel-body">
                                 <div class="row space-1">
@@ -218,15 +232,26 @@
 
                             </div>
                             <!--- iaga part-->
-                            <div id="iaga0" style="display: block;">
+                            <div id="iaga" style="display: block;">
                             <div class="panel-heading">
-                                <div class="panel-title">IAGA</div>
+                                <div class="panel-title">
+                                    IAGA
+                                    <i id="aiaga" onclick="addiaga()" class="fa fa-plus-square-o"></i> 
+                                </div>
                             </div>
+
+                            <div id="part_iaga">
+                            <div id="iaga_part0"> 
+
                             <div class="panel-body">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                           <div class="pull-left">
                                             <label class="control-label"><span>Chart Type</span></label>
+                                            <i id="iaga_down0" class="fa fa-angle-double-down" onclick="down_right(this.id)"></i>
+                                            <i id="iaga_right0" class="fa fa-angle-double-right"
+                                            onclick="right_down(this.id)" style="display: none"></i>
+                                            <i id="riaga0" onclick="removeiaga(this.id)" class="fa fa-minus-square-o" style="display: none"></i>
                                           </div>
                                           <div class="Select Select--single is-searchable has-value">
                                              <div class="Select-control">
@@ -241,6 +266,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <div id="iaga_others0">
                             <div class="panel-body" id="table_stations0" style="display:none;">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
@@ -343,28 +369,6 @@
                                 </div>
                             </div>
 
-<!--                             <div class="panel-body"  id="single_time0" style="display:block;">
-                                <div class="row space-1">
-                                    <div class="col-lg-12 col-xs-12">
-                                        <div class="pull-left">
-                                            <label class="control-label"><span>Time</span></label>
-                                        </div>
-
-                                        <div class="Select Select--single is-searchable has-value">
-                                            <div class="Select-control">
-                                                <div class="Select-input">
-                                                    <div id="Timeselection-contour0" class="Select-time">
-                                                        <input type="text" id="starttimeaa0" value="" autocomplete="off"/>
-                                                        <input type="text" id="starttimebb0" value="00:00:00" autocomplete="off"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
-
-
                             <div class="panel-body"  id="double_time0" style="display:none;">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
@@ -389,15 +393,24 @@
                                 </div>
                             </div>
 
-                            <div class="panel-body" id="searchpart0" style="display: none">
+                            </div>
+                            </div>
+                            </div>
+                            
+
+                            <div class="panel-body" id="searchpart" style="display: none">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                         <div class="Select Select--single is-searchable has-value">
-                                            <input class="btn-1" id='search0' type="submit" value="Submit" onclick="search(this.id)"/>
+                                            <input class="btn-1" id='search0' type="submit" value="Submit" onclick="search()"/>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+
+                            
+
                             </div>
 
                         </div>
@@ -425,41 +438,62 @@
                                 <div class="tab-content tabs">
                                     <!-- graph  absent-->
                                     <div role="tabpanel" class="tab-pane fade in active" id="Section1" style="position: relative;">
+                                        <div id="graph_iaga">
                                         <div id="select_timespan0" style="display: block;">
-                                            <label class="control-label"><input type="text" id="yeara0" onchange="yinput(this.id)"/><span>year</span></label>
-                                            <p id="year0"></p>
-                                            <label class="control-label"><input type="text" id="montha0" onchange="minput(this.id)"/><span>month</span></label>
-                                            <p id="month0"></p>
-                                            <label class="control-label"><input type="text" id="daya0" onchange="dinput(this.id)"/><span>day</span></label>
-                                            <p id="day0"></p>
-                                            <div id="hhmmsspart0">
-                                                <span>hh-mm-ss</span>
-                                                <input type="text" id="hhmmss0" value="00:00:00" autocomplete="off"/>
-                                            </div>
-                                            <label class="control-label"><span>Time Span</span></label>&nbsp;&nbsp;
-                                            <input type="text" class="spanValue" id="spanValue0" name="span_value" autocomplete="off"/>
-                                            <select id='spanCell0' name='timespan' autocomplete="off">
-                                                <option value='y'>year</option>
-                                                <option value='m'>month</option>
-                                                <option value='d'>day</option>
-                                                <option value='h'>hour</option>
-                                                <option value='n'>minute</option>
-                                            </select>
-                                            <button class="btn-2" type="button" id="stop0" onclick="stop(this.id)">stop</button>
-                                            <button class="btn-2" type="button" id="run0" onclick="run(this.id)">run</button>
+                                            <table cellspacing="10" style="font-weight: lighter;">
+                                                <tr>
+                                                    <th class="timeyy"> <span>year</span></th>
+                                                    <th style="width: 200px"> <input class="timeinput" type="text" id="yeara0" onchange="yinput(this.id)"/></th>
+                                                    <th><p class="slider" id="year0"></p></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="timeyy"><span>month</span></th>
+                                                    <th><input class="timeinput" type="text" id="montha0" onchange="minput(this.id)"/></th>
+                                                    <th> <p class="slider" id="month0"></p></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="timeyy"><span>day</span></th>
+                                                    <th><input class="timeinput" type="text" id="daya0" onchange="dinput(this.id)"/></th>
+                                                    <th><p class="slider" id="day0"></p></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="timeyy"><span>hh-mm-ss</span></th>
+                                                    <th><input class="timeinput"type="text" id="hhmmss0" value="00:00:00" autocomplete="off"/></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="timeyy"><span>Time Span</span></th>
+                                                    <th>
+                                                        <input class="timeinput" type="text" class="spanValue" id="spanValue0" name="span_value" autocomplete="off"/>
+                                                        <select id='spanCell0' name='timespan' autocomplete="off">
+                                                            <option value='y'>year</option>
+                                                            <option value='m'>month</option>
+                                                            <option value='d'>day</option>
+                                                            <option value='h'>hour</option>
+                                                            <option value='n'>minute</option>
+                                                        </select>
+                                                    </th>
+                                                    <th>
+                                                        <i id="stop0" onclick="stop(this.id)" class="fa fa-pause" style="display: none"></i> 
+                                                        <i id="run0" onclick="run(this.id)" class="fa fa-play"></i> 
+                                                    </th>
+                                                </tr>
+                                            </table>
                                         </div>
                                         <div class="loading" id="loading0" style="display:none;">
                                             <img src="loading2.gif" alt="loading" style="position: absolute;top: 50%;left: 50%;"/>
                                         </div>
                                         <div id="chart-part0"></div>
+                                        </div>
                                     </div>
                                     <!-- data list absent-->
                                     <div role="tabpanel" class="tab-pane fade" id="Section2">
+                                        <div id="table_iaga">
                                         <div id="tablepart0" style="display:none;">
                                             <table id="contour_table0" class="cell-border" cellspacing="0" width="100%"> 
                                               <tbody id="table0"></tbody>  
                                             </table> 
                                         </div>
+                                        <div>
                                     </div>
                                 </div>
                             </div>
