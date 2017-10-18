@@ -15,15 +15,16 @@
         <link rel="stylesheet" type="text/css" href="js/jonthornton-jquery-timepicker/lib/bootstrap-datepicker.css" />
         <script type="text/javascript" src="js/jonthornton-jquery-timepicker/lib/site.js"></script>
         <link rel="stylesheet" type="text/css" href="js/jonthornton-jquery-timepicker/lib/site.css" />
-        <script src="http://jonthornton.github.io/Datepair.js/dist/datepair.js"></script>
-        <script src="http://jonthornton.github.io/Datepair.js/dist/jquery.datepair.js"></script>
+        <script src="js/Datepair.js-master/dist/datepair.js"></script>
+        <script src="js/Datepair.js-master/dist/jquery.datepair.js"></script>
         <link href="http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="css/superset.css" />
         <link rel="stylesheet" type="text/css" href="css/flags16.css" />  
         <script src="js/css-theme.9bab23a75b7da77b0ccd.entry.js"></script>
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" />
-        <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.plot.ly/plotly-latest.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/dataTables.min.css" />
+        <script src="js/dataTables.min.js"></script>
+        <script type="text/javascript" src="js/plotly.js-master/dist/plotly.js"></script>
+   
         <link rel="stylesheet" type="text/css" href="css/style.css" /> 
     </head>
     
@@ -224,7 +225,7 @@
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                         <div class="Select Select--single is-searchable has-value">
-                                            <input class="btn-1" id='istpsearch0' type="submit" value="Submit"/>
+                                            <input class="btn-1" id='istpsearch' type="submit" value="Submit" onclick="istpsearch()" />
                                         </div>
                                     </div>
                                 </div>
@@ -248,6 +249,8 @@
                                     <div class="col-lg-12 col-xs-12">
                                           <div class="pull-left">
                                             <label class="control-label"><span>Chart Type</span></label>
+                                            <!-- <i class="fa fa-question-circle" id="ct"></i> -->
+                                            <!-- <div id="ctd" style="display: none" class="hoverdiv">dadad</div> -->
                                             <i id="iaga_down0" class="fa fa-angle-double-down" onclick="down_right(this.id)"></i>
                                             <i id="iaga_right0" class="fa fa-angle-double-right"
                                             onclick="right_down(this.id)" style="display: none"></i>
@@ -298,6 +301,7 @@
                                             <div class="Select-control">
                                                 <div class="Select-input">
                                                     <select class="Select-input" id='reported_type0' name='reported_type' autocomplete="off" onchange="reportedTerm(this.id)">
+                                                    <option>XYZ</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -317,6 +321,7 @@
                                             <div class="Select-control">
                                                 <div class="Select-input">
                                                     <select class="Select-input" id='term0' name='term' autocomplete="off">
+                                                    <option>X</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -439,22 +444,22 @@
                                     <!-- graph  absent-->
                                     <div role="tabpanel" class="tab-pane fade in active" id="Section1" style="position: relative;">
                                         <div id="graph_iaga">
-                                        <div id="select_timespan0" style="display: block;">
+                                        <div id="select_timespan0" style="display: block;border-bottom: 1px solid #0F5953;">
                                             <table cellspacing="10" style="font-weight: lighter;">
                                                 <tr>
                                                     <th class="timeyy"> <span>year</span></th>
-                                                    <th style="width: 200px"> <input class="timeinput" type="text" id="yeara0" onchange="yinput(this.id)"/></th>
                                                     <th><p class="slider" id="year0"></p></th>
+                                                    <th style="width: 200px"> <input class="timeinput" type="text" id="yeara0" onchange="yinput(this.id)"/></th>
                                                 </tr>
                                                 <tr>
                                                     <th class="timeyy"><span>month</span></th>
-                                                    <th><input class="timeinput" type="text" id="montha0" onchange="minput(this.id)"/></th>
                                                     <th> <p class="slider" id="month0"></p></th>
+                                                    <th><input class="timeinput" type="text" id="montha0" onchange="minput(this.id)"/></th>
                                                 </tr>
                                                 <tr>
                                                     <th class="timeyy"><span>day</span></th>
-                                                    <th><input class="timeinput" type="text" id="daya0" onchange="dinput(this.id)"/></th>
                                                     <th><p class="slider" id="day0"></p></th>
+                                                    <th><input class="timeinput" type="text" id="daya0" onchange="dinput(this.id)"/></th>
                                                 </tr>
                                                 <tr>
                                                     <th class="timeyy"><span>hh-mm-ss</span></th>
@@ -473,8 +478,10 @@
                                                         </select>
                                                     </th>
                                                     <th>
+                                                        <button style="height: 30px;">
                                                         <i id="stop0" onclick="stop(this.id)" class="fa fa-pause" style="display: none"></i> 
                                                         <i id="run0" onclick="run(this.id)" class="fa fa-play"></i> 
+                                                        </button>
                                                     </th>
                                                 </tr>
                                             </table>
@@ -483,6 +490,13 @@
                                             <img src="loading2.gif" alt="loading" style="position: absolute;top: 50%;left: 50%;"/>
                                         </div>
                                         <div id="chart-part0"></div>
+                                        </div>
+
+                                        <div id="graph_istp">
+                                        <div class="loading" id="loadinga0" style="display:none;">
+                                            <img src="loading2.gif" alt="loading" style="position: absolute;top: 50%;left: 50%;"/>
+                                        </div>
+                                        <div id="chart-istp0"></div>
                                         </div>
                                     </div>
                                     <!-- data list absent-->
@@ -493,7 +507,14 @@
                                               <tbody id="table0"></tbody>  
                                             </table> 
                                         </div>
-                                        <div>
+                                        </div>
+                                        <div id="table_istp">
+                                        <div id="tableistp0" style="display:none;overflow-x: auto;">
+                                            <table id="istp_table0" class="cell-border" cellspacing="0" width="100%"> 
+                                              <tbody id="istptable0"></tbody>  
+                                            </table> 
+                                        </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

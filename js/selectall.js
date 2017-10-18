@@ -5,11 +5,15 @@ function Iait_display(str){
         document.getElementById("graph_iaga").style.display="block";
         document.getElementById("table_iaga").style.display="block";
         document.getElementById("istp").style.display="none";
+        document.getElementById("graph_istp").style.display="none";
+        document.getElementById("table_istp").style.display="none";
     }else{
         document.getElementById("istp").style.display="block";
         document.getElementById("iaga").style.display="none";
         document.getElementById("graph_iaga").style.display="none";
         document.getElementById("table_iaga").style.display="none";
+        document.getElementById("graph_istp").style.display="block";
+        document.getElementById("table_istp").style.display="block";
     }
 }
 // variables select  /istp/data_sets/{data_set}/variables
@@ -154,7 +158,7 @@ function source(num){
 }
 //timepicker istp
 function timeistp(num){
-    $("#starttimec"+num).val("2010-2-1");
+    $("#starttimec"+num).val("1994-2-1");
     $("#endtimec"+num).val("2010-4-16");
     $('#Timeistp'+num+' .time').timepicker({
         'timeFormat': 'g:i:s',
@@ -180,17 +184,24 @@ function Station_display(str,str1)
             num+=str1[i];
     }
     if(str=="contour"){
+        LineNum--;
         document.getElementById("table_stations"+num).style.display="none";
-        document.getElementById("searchpart").style.display="none";
+        //document.getElementById("searchpart").style.display="none";
         document.getElementById("double_time"+num).style.display="none";
         document.getElementById("select_timespan"+num).style.display="block";
    }
    else{
+        LineNum++;
         document.getElementById("table_stations"+num).style.display="block";
-        document.getElementById("searchpart").style.display="block";
+        //document.getElementById("searchpart").style.display="block";
         document.getElementById("double_time"+num).style.display="block";
         document.getElementById("select_timespan"+num).style.display="none";
    } 
+   if(LineNum>=1){
+        document.getElementById("searchpart").style.display="block";
+   }else{
+        document.getElementById("searchpart").style.display="none";
+   }
 }
 function showDivFun(str1){
     var num = "";
@@ -608,3 +619,17 @@ function init_istp(num){
 }
 init_istp(0);
 init_iaga(0);
+// $(document).ready(function(){
+//     $("#ct").mouseover(function(){
+//         document.getElementById("ctd").style.display="";
+//     })
+//     $("#ct").mouseout(function(){
+//         document.getElementById("ctd").style.display="none";
+//     })
+// })
+// $("#ct").mouseover(function(){
+//      document.getElementById("ctd"+num).style.display="";
+// })
+// $("#ct").mouseout(function(){
+//      document.getElementById("ctd"+num).style.display="none";
+// })

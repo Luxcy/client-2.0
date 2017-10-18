@@ -1,4 +1,6 @@
     $("#signin-btn").click(function(){
+        var url = "127.0.0.1";
+       // var url = "172.25.88.10";
         var email = $.trim($("#email").val());
          if(email == ""){
              return false;
@@ -6,7 +8,7 @@
          //ajax去服务器端校验
          $.ajax({
              type:"POST",
-             url:"http://172.25.88.5:5000/forget_password",
+             url:"http://"+url":5000/forget_password",
              data:{"email":email},
              dataType:'json',
              success:function(data2){

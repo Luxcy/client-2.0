@@ -132,24 +132,27 @@
     font-size: 20px;
 }
 .fa.fa-play{
-    float: right;
     cursor: pointer;
     font-size: 20px;
 }
 .fa.fa-angle-double-down{
     cursor: pointer;
+    font-size: 20px;
 }
 .fa.fa-angle-double-right{
     cursor: pointer;
+    font-size: 20px;
 }
 .fa.fa-plus-square-o{
     cursor: pointer;
+    font-size: 24px;
 }
 .fa.fa-minus-square-o{
     cursor: pointer;
+    font-size: 24px;
 }
 .slider{
-    width: 400px;
+    width: 200px;
     height: 5px;
 }
 .timeinput{
@@ -168,3 +171,15 @@ th{
 .fa.fa-minus-square-o{
     float: right;
 }
+#select_part{
+    overflow-y: auto;
+    height: 696px;
+}
+/*.hoverdiv{
+    z-index: 10000;
+    position: absolute;
+    top: 10%,
+    left:20%;
+    height: 300px;
+    width: 40px;
+}*/

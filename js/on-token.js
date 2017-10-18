@@ -1,5 +1,7 @@
+ 
     $("#signup-btn").click(function(){
-
+        var url = "127.0.0.1";
+        //var url = "172.25.88.10";
         var username = $.trim($("#username").val());
         var email = $.trim($("#email").val());
         var password = $.trim($("#password").val());
@@ -14,7 +16,7 @@
          }
          $.ajax({
              type:"POST",
-             url:"http://172.25.88.5:5000/register",
+             url:"http://"+url+":5000/register",
              data:{"username":username,"email":email,"password":password},
              dataType:'json',
              success:function(data2){
