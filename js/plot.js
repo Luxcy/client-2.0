@@ -757,6 +757,132 @@ function sd(num)
          
 
 }
+function plasmagram(num,variable){
+    var deferreds = [];
+
+    var i = 1;
+    offset = 0;
+    for (i = 1; i <= 1; i++) {
+        var defer = $.Deferred();
+        $.ajax({
+            url: URL+"/data_sets/"+$("#data_sets"+num).val()+"/data?"
+             +"variables="+$("#variables"+num).val()
+             +"&start_time="+$("#starttimec"+num).val()+" "+$("#starttimed"+num).val()
+             +"&end_time="+$("#endtimec"+num).val()+" "+$("#endtimed"+num).val()
+             +"&offset="+offset
+             +"&number="+1,
+            type: "GET",
+            dataType: "JSON", 
+            beforeSend: function(request) {
+                token = window.sessionStorage.getItem('token');
+                request.setRequestHeader("Authorization", token);
+            },
+            success:function(data){
+                 defer.resolve(data);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    var result = eval("("+XMLHttpRequest.responseText+")");
+                           console.log(result.message);
+            },
+        }).done(function(data){
+            plasmagramx(num,variable,data);
+        })
+        deferreds.push(defer);
+        offset+=1;
+    }
+    return deferreds;
+}
+function plasmagramx(num,variable,datas){
+    var depend_1 = datas["attributes"][variable]["DEPEND_1"];
+    var depend_2 = datas["attributes"][variable]["DEPEND_2"];
+    console.log(depend_1);
+    console.log(depend_2);
+    
+    var xcnt = datas["data"][0][depend_1].length;
+    var ycnt = datas["data"][0][depend_2].length;
+
+    var x = [];
+    var y = [];
+    var z = [];
+    var data = [];
+    var time = format(datas["data"][0]["time_stamp"]*1000);
+    
+    for(var i=0;i<xcnt;i++) x[i] = datas["data"][0][depend_1][i];
+    for(var i=0;i<ycnt;i++) y[i] = datas["data"][0][depend_2][i];
+    for(var i=0;i<ycnt;i++){
+        z[i]=[];
+        for(var j=0;j<xcnt;j++){
+            z[i][j]=datas["data"][0][variable][i][j];
+        }
+    }
+    console.log(x);
+    console.log(y);
+    console.log(z);
+
+    data = [{
+        x: x,
+        y: y,
+        z: z,
+        type: 'heatmap',
+        showlegend:false,
+    }];
+    
+    var layout = {
+        title:time,
+        autosize: true, 
+        xaxis: {
+        autorange: true, 
+        }
+    };
+    console.log(x);
+    Plotly.newPlot('chart-istp'+num, data, layout,{displayModeBar: false});
+
+    $('#istp_table'+num).html("");
+    var html="";
+    for(var i=0;i<ycnt;i++){
+        html+='<th>'+depend_2+"_"+y[i]+'</th>'
+    }
+   var html2='<thead>' 
+            +'<tr>'
+            +'<th>'+depend_1+'</th>' 
+            +html
+            +'</tr> '
+            +'</thead> '
+            +'<tfoot> '
+            +'<tr> '
+            +'<th>'+depend_1+'</th>' 
+            +html
+            +'</tr> '
+            +'</tfoot>'
+            +'<tbody id="istptable'+num+'">'
+            +'</tbody>';
+    obj = document.getElementById("istp_table"+num+"_wrapper");
+    if(obj){
+        $('#istp_table'+num).dataTable().fnDestroy();
+    }
+    $('#istp_table'+num).html(html2);
+    document.getElementById("tableistp"+num).style.display="block";
+    $('#istptable'+num).html("");
+    var html1='';
+    for(var i=0;i<xcnt;i++){
+        var yhtml = "";
+        for(var j=0;j<ycnt;j++){
+            yhtml+='<td>'+z[j][i]+'</td>'
+        }
+        html1+='<tr>'
+            +'<td>'+x[i]+'</td>'
+            +yhtml
+            +'</tr>';
+    }
+
+    $('#istptable'+num).html(html1);
+
+    table=$('#istp_table'+num).DataTable({
+            
+            "searching":false,
+            "order": [[1, "asc"],[0,"asc"]]
+         });
+}
 function spectrogram(num,variable,datas){
     var cnt = datas.count;
     
@@ -783,9 +909,6 @@ function spectrogram(num,variable,datas){
             z[i][j]=datas["data"][j][variable][i];
         }
     }
-    console.log(x);
-    console.log(y);
-    console.log(z);
 
     data = [{
         x: x,
@@ -854,6 +977,100 @@ function spectrogram(num,variable,datas){
             "order": [[1, "asc"],[0,"asc"]]
          });
 }
+function stack_plot(num,variable,datas){
+    var cnt = datas.count;
+    
+    var values = [];
+    //var depend_1 = datas["attributes"][variable]["DEPEND_1"];
+    //values = datas["attributes"][depend_1]["VALUES"];
+
+//if(values == undefined) !!!!!!VALIDMAX VALIDMIN
+    var ycnt = datas["data"][0][variable].length;
+    console.log(ycnt);
+
+    var x = [];
+    var y = [];
+    var data = [];
+
+    for(var i=0;i<cnt;i++){
+        x[i] = format(datas["data"][i]["time_stamp"]*1000);
+    }
+    for(var i=0;i<ycnt;i++){
+        y[i]=[];
+        for(var j=0;j<cnt;j++){
+            y[i][j]=datas["data"][j][variable][i];
+        }
+    }
+    for(var i=0;i<ycnt;i++){
+        var trace = {
+                x: x,
+                y: y[i],
+                mode: "lines", 
+                type: "scatter", 
+              //  showlegend:false,
+            };
+        data.push(trace);
+    }
+    
+    var layout = {
+        title:variable,
+        height:500,
+        autosize: true, 
+        xaxis: {
+        autorange: true, 
+        type: "date"
+        }
+    };
+
+    Plotly.newPlot('chart-istp'+num, data, layout,{displayModeBar: false});
+
+    $('#istp_table'+num).html("");
+    var html="";
+    for(var i=0;i<ycnt;i++){
+        html+='<th>'+variable+"["+i+"]"+'</th>'
+    }
+   var html2='<thead>' 
+            +'<tr>'
+            +'<th>time</th>' 
+            +html
+            +'</tr> '
+            +'</thead> '
+            +'<tfoot> '
+            +'<tr> '
+            +'<th>time</th> '
+            +html
+            +'</tr> '
+            +'</tfoot>'
+            +'<tbody id="istptable'+num+'">'
+            +'</tbody>';
+    obj = document.getElementById("istp_table"+num+"_wrapper");
+    if(obj){
+        $('#istp_table'+num).dataTable().fnDestroy();
+    }
+    $('#istp_table'+num).html(html2);
+    document.getElementById("tableistp"+num).style.display="block";
+    $('#istptable'+num).html("");
+
+    var html1='';
+    for(var i=0;i<x.length;i++){
+        var yhtml = "";
+        for(var j=0;j<ycnt;j++){
+            yhtml+='<td>'+y[j][i]+'</td>';
+        }
+        html1+='<tr>'
+            +'<td>'+x[i]+'</td>'
+            +yhtml
+            +'</tr>';
+    }
+
+    $('#istptable'+num).html(html1);
+
+    table=$('#istp_table'+num).DataTable({
+            
+            "searching":false,
+            "order": [[1, "asc"],[0,"asc"]]
+         });
+}
 function istpchart(num){
     TESTER = document.getElementById('chart-istp'+num);
     TESTER.innerHTML=" ";
@@ -867,7 +1084,7 @@ function istpchart(num){
          +"&start_time="+$("#starttimec"+num).val()+" "+$("#starttimed"+num).val()
          +"&end_time="+$("#endtimec"+num).val()+" "+$("#endtimed"+num).val()
          +"&offset="+offset
-         +"&number="+1000,
+         +"&number="+100,
         type: "GET",
         dataType: "JSON", 
         beforeSend: function(request) {
@@ -883,7 +1100,6 @@ function istpchart(num){
                     },
     })
    .done(function(data){
-        console.log(data);
         document.getElementById("loadinga"+num).style.display="none";
         var variable = $("#variables"+num).val();
         if(data["attributes"][variable]["DISPLAY_TYPE"] == undefined){
@@ -893,8 +1109,7 @@ function istpchart(num){
         }else {
             if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='p'){//plasmagram
 
-                alert("plasmagram");
-
+                plasmagram(num,variable);
             }else if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
                 //alert("time_series");
                 time_series(num,variable,data);
@@ -902,7 +1117,7 @@ function istpchart(num){
             }else{
                 if(data["attributes"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
                 alert("stack_plot");
-                time_series(num,variable,data);
+                stack_plot(num,variable,data);
 
                 }else{//spectrogram
                     alert("spectrogram");
@@ -917,10 +1132,50 @@ function istpchart(num){
  
     })
 }
+
+
+function test() {
+    var deferreds = [];
+
+    var i = 1;
+    offset = 0;
+    for (i = 1; i <= 5; i++) {
+        Tn++;
+        var defer = $.Deferred();
+        $.ajax({
+            url: URL+"/data_sets/"+$("#data_sets"+num).val()+"/data?"
+             +"variables="+$("#variables"+num).val()
+             +"&start_time="+$("#starttimec"+num).val()+" "+$("#starttimed"+num).val()
+             +"&end_time="+$("#endtimec"+num).val()+" "+$("#endtimed"+num).val()
+             +"&offset="+offset
+             +"&number="+1,
+            type: "GET",
+            dataType: "JSON", 
+            beforeSend: function(request) {
+                token = window.sessionStorage.getItem('token');
+                request.setRequestHeader("Authorization", token);
+            },
+            success:function(data){
+                 defer.resolve(data);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    var result = eval("("+XMLHttpRequest.responseText+")");
+                           console.log(result.message);
+            },
+        }).done(function(data){
+                console.log(data);
+        })
+        deferreds.push(defer);
+        offset+=1;
+    }
+    return deferreds;
+}
+ 
 function istpsearch(){
     num=0;
-     document.getElementById("loadinga"+num).style.display="";
-     istpchart(0);
+    document.getElementById("loadinga"+num).style.display="";
+    istpchart(0);
+    //test();
 }
 /*
  <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
