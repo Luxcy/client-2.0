@@ -19,32 +19,26 @@ function copy(name,num,id){
 
     var o = clonedNode.childNodes;
     findall(o,num);
-    // if(name=="iaga_part"){
-    //     var node = document.getElementById(id)
-    //     node.insertBefore(clonedNode,node.childNodes[0]);
-    // }else{
-        document.getElementById(id).appendChild(clonedNode);
- //   }
-   // sourceNode.parentNode.appendChild(clonedNode); 
+    document.getElementById(id).appendChild(clonedNode);
 }
 function addiaga(){
-    //copy("iaga_part",SelectNum,"searchpart0");
-    copy("iaga_part",SelectNum,"part_iaga");
-    copy("popSta",SelectNum,"all");
-    copy("select_timespan",SelectNum,"graph_iaga");
-    copy("loading",SelectNum,"graph_iaga");
-    SelectNum = SelectNum + 1;
-    $("#graph_iaga").append('<div id="chart-part'+SelectNum+'"></div>')
+    //copy("iaga_part",iagaNum,"searchpart0");
+    copy("iaga_part",iagaNum,"part_iaga");
+    copy("popSta",iagaNum,"all");
+    copy("select_timespan",iagaNum,"graph_iaga");
+    copy("loading",iagaNum,"graph_iaga");
+    iagaNum = iagaNum + 1;
+    $("#graph_iaga").append('<div id="chart-part'+iagaNum+'"></div>')
 
-    var html='<div id="tablepart'+SelectNum+'" style="display:none;">'
-             +'<table id="contour_table'+SelectNum+'" class="cell-border" cellspacing="0" width="100%">' 
-             +'<tbody id="table'+SelectNum+'"></tbody>' 
+    var html='<div id="tablepart'+iagaNum+'" style="display:none;">'
+             +'<table id="contour_table'+iagaNum+'" class="cell-border" cellspacing="0" width="100%">' 
+             +'<tbody id="table'+iagaNum+'"></tbody>' 
              +'</table>' 
              +'</div>';
     $("#table_iaga").append(html);
-    document.getElementById("table_stations"+SelectNum).style.display = "none";
-    document.getElementById("riaga"+SelectNum).style.display = "";
-    init_iaga(SelectNum);
+    document.getElementById("table_stations"+iagaNum).style.display = "none";
+    document.getElementById("riaga"+iagaNum).style.display = "";
+    init_iaga(iagaNum);
 }
 function removeiaga(str1){
     var num = "";
@@ -60,11 +54,12 @@ function removeiaga(str1){
     $("#tablepart"+num).remove();
 }
 function addistp(){
-    copy("istp_part",SelectNum,"part_istp");
-    //copy("loading",SelectNum,"Section1");
-    SelectNum = SelectNum + 1;
-    document.getElementById("ristp"+SelectNum).style.display = "";
-    init_istp(SelectNum);
+    copy("istp_part",istpNum,"part_istp");
+    istpNum = istpNum + 1;
+    $("#graph_istp").append('<div id="graph_mult'+istpNum+'"></div>');
+    $("#table_istp").append('<div id="table_mult'+istpNum+'"></div>');
+    document.getElementById("ristp"+istpNum).style.display = "";
+    init_istp(istpNum);
 }
 function removeistp(str1){
     var num = "";
@@ -73,5 +68,4 @@ function removeistp(str1){
             num+=str1[i];
     }
     $("#istp_part"+num).remove();
-    //$("#loading"+num).remove();
 }

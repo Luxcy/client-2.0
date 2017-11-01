@@ -42,6 +42,7 @@
                     <div class="panel-heading">
                         <div class="panel-title">Sign Up</div>
                     </div>
+                    <form>
                     <div style="padding-top:30px" class="panel-body" id="part-one">
                         <div class="help-block">Enter your username email and password below:</div>
                         <div class="control-group">
@@ -49,17 +50,17 @@
                             <div class="controls">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                    <input class="form-control" id="username" name="username" size="80" type="text" value="" required="required">
+                                    <input class="form-control" id="username" name="username" size="80" type="text" value="" autocomplete="off" pattern="^.{5,20}$" oninvalid="setCustomValidity('the length must be between 5 and 20')" oninput="setCustomValidity('')" required/>
                                 </div>
                                 <label class="control-label" for="openid">Email:</label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                    <input class="form-control" id="email" name="email" size="80" type="text" value="" required="required">
+                                    <input class="form-control" id="email" name="email" size="80" type="text" value="" pattern="^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$" oninvalid="setCustomValidity('please input right email')" oninput="setCustomValidity('')" required="required">
                                 </div>
                                 <label class="control-label" for="openid">Password:</label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                    <input class="form-control" id="password" name="password" size="80" type="password" value="" required="required">
+                                    <input class="form-control" id="password" name="password" size="80" type="password" value="" pattern="^.{6,16}$" oninvalid="setCustomValidity('the length must be between 6 and 16')" oninput="setCustomValidity('')" required="required">
                                 </div>
                             </div>
                         </div>
@@ -72,6 +73,7 @@
                             </div>
                         </div>
                     </div>
+                    <form>
                     <div style="padding-top:30px;display:none;" class="panel-body" id="part-two">
                         <div class="help-block" id="b_message"></div>
                         <div class="control-group">

@@ -43,6 +43,7 @@
                     <div class="panel-heading">
                         <div class="panel-title">Send Email</div>
                     </div>
+                    <form>
                     <div style="padding-top:30px" class="panel-body" id="part-one">
                         <div class="help-block">Enter your email to reset your password:</div>
                         <div class="control-group">
@@ -50,7 +51,7 @@
                             <div class="controls">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-                                    <input class="form-control" id="email" name="email" size="80" type="text" value="" required="required">
+                                    <input class="form-control" id="email" name="email" size="80" type="text" value="" pattern="^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$" oninvalid="setCustomValidity('please input right email')" oninput="setCustomValidity('')" required="required">
                                 </div>
                             </div>
                         </div>
@@ -66,6 +67,7 @@
                     <div style="padding-top:30px;display:none;" class="panel-body" id="part-two">
                         <div class="help-block" id="b_message"></div>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>

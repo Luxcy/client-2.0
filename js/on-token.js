@@ -32,8 +32,12 @@
             }, 
          });
  }); 
-$("#signup-btn2").click(function(){
-    window.location.href='login.html';
-}); 
-
+    $("#signup-btn2").click(function(){
+        window.location.href='login.html';
+    }); 
+    $(document).keyup(function(event){
+        if (event.keyCode == "13") {//keyCode=13是回车键
+            $('#signup-btn').click();
+        }
+    });
 

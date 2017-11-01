@@ -34,8 +34,11 @@ function variables(str1){
         success: function(data) {
             datas=data.variables;
             document.getElementById("variables"+num).options.length=0;
-            for(var i=0;i<datas.length;i++)
+            for(var i=0;i<datas.length;i++){
                 document.getElementById("variables"+num).options.add(new Option(datas[i],datas[i]));
+                $("#variables"+num).multiselect("refresh"); 
+            }
+
         },
         error: function(jqXHR){
             alert("error：" + jqXHR.status);  
@@ -614,8 +617,13 @@ function init_iaga(num){
     yy(num);
 }
 function init_istp(num){
+    $('#variables'+num).multiselect({
+        selectedList: 4,
+        width:428,
+
+    });
     source(num);
-    timeistp(num); 
+    timeistp(num);
 }
 init_istp(0);
 init_iaga(0);

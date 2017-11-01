@@ -370,6 +370,7 @@ function play(num){
     
 }
 function line(num){
+    var offset = 0;
     TESTER = document.getElementById('chart-part'+num);
     TESTER.innerHTML=" ";
     var x=[];
@@ -381,7 +382,9 @@ function line(num){
          +"&sample_rate="+$("#sample_rate"+num).val()+"&term="+$("#term"+num).val()
          +"&data_type="+$("#data_type"+num).val()[0]
          +"&start_time="+$("#starttimea"+num).val()+" "+$("#starttimeb"+num).val()
-         +"&end_time="+$("#endtimea"+num).val()+" "+$("#endtimeb"+num).val(),
+         +"&end_time="+$("#endtimea"+num).val()+" "+$("#endtimeb"+num).val()
+         +"&offset="+offset
+         +"&number="+100,
         type: "GET",
         dataType: "JSON", 
         beforeSend: function(request) {
@@ -422,6 +425,96 @@ function line(num){
                 }
         };
         Plotly.newPlot(TESTER, data,layout,{displayModeBar: false});
+       //=========================================================================
+       $('#contour_table'+num).html("");
+       var html2='<thead>' 
+                +'<tr>'
+                +'<th>时间</th>' 
+                +'<th class="term_name'+num+'">磁分量</th>'
+                +'</tr> '
+                +'</thead> '
+                +'<tfoot> '
+                +'<tr> '
+                +'<th>时间</th> '
+                +'<th class="term_name'+num+'">磁分量</th>'
+                +'</tr> '
+                +'</tfoot>';
+        obj = document.getElementById("contour_table"+num+"_wrapper");
+            if(obj){
+                $('#contour_table'+num).dataTable().fnDestroy();
+            }
+        $('#contour_table'+num).html(html2);
+       document.getElementById("tablepart"+num).style.display="block";
+        $('#table'+num).html("");
+        var html='';
+        for(var i=0;i<x.length;i++){
+            html+='<tr>'
+                +'<td>'+x[i]+'</td>'
+                +'<td>'+y[i]+'</td>'
+                +'</tr>';
+        }
+        $('#table'+num).html(html);
+        var z=[];
+        for(var i=0;i<x.length;i++)
+            z.push([x[i],y[i]]);
+        $('#contour_table'+num).DataTable({
+            "data": z,
+            "searching":false,
+            "destroy":true
+        });
+        $(".term_name"+num).html("磁分量"+$("#term"+num).val());
+    })
+   offset = 100;
+   linex(offset,num);
+}
+function linex(offset,num){
+    TESTER = document.getElementById('chart-part'+num);
+    TESTER.innerHTML=" ";
+    var x=[];
+    var y=[];
+    var defer = $.Deferred();
+    $.ajax({
+        url: Url+"/data?"
+         +"stations="+$("#stations"+num).val()
+         +"&sample_rate="+$("#sample_rate"+num).val()+"&term="+$("#term"+num).val()
+         +"&data_type="+$("#data_type"+num).val()[0]
+         +"&start_time="+$("#starttimea"+num).val()+" "+$("#starttimeb"+num).val()
+         +"&end_time="+$("#endtimea"+num).val()+" "+$("#endtimeb"+num).val()
+         +"&offset="+offset
+         +"&number="+100,
+        type: "GET",
+        dataType: "JSON", 
+        beforeSend: function(request) {
+            token = window.sessionStorage.getItem('token');
+            request.setRequestHeader("Authorization", token);
+        },
+        success:function(data){
+            offset += 100;
+            if(data["data"].length != 0){
+                console.log(offset);
+                linex(offset,num);
+                defer.resolve(data);
+            }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    var result = eval("("+XMLHttpRequest.responseText+")");
+                    console.log(result.message);
+                },
+    })
+   .done(function(data){
+        $.each(data.data,function(i,info){
+            var x1=format(info["time_stamp"]*1000);
+            x.push(x1);
+            y.push(info[$("#term"+num).val()]);
+        });
+        Plotly.extendTraces(TESTER, {x:x,y:y},0);
+        var add=[];
+            for(var i=0;i<x.length;i++){
+                add[i]=[];
+                add[i].push(x[i]);
+                add[i].push(y[i]);
+            }
+            table.rows.add(add).draw(); 
        //=========================================================================
        $('#contour_table'+num).html("");
        var html2='<thead>' 
@@ -513,32 +606,31 @@ function Logoutbtn(){
 }
 
 function search(){
+    line(0);
+    // for(var num=0;num<=SelectNum;num++)
+    // {
+    //     if($("#iaga_part"+num).length>0){
+    //         //console.log(num);
 
-    for(var num=0;num<=SelectNum;num++)
-    {
-        if($("#iaga_part"+num).length>0){
-            //console.log(num);
-
-            document.getElementById("tablepart"+num).style.display="none";
-            document.getElementById("loading"+num).style.display="block";
-            document.getElementById("select_timespan"+num).style.display="none";
-            line(num);
-        }
-    }   
+    //         document.getElementById("tablepart"+num).style.display="none";
+    //         document.getElementById("loading"+num).style.display="block";
+    //         document.getElementById("select_timespan"+num).style.display="none";
+    //         line(num);
+    //     }
+    // }   
 }
 //=======================================================================
 // /istp/data_sets/{data_set}/data?
 //                                     variables={variables}&
 //                                     start_time={start_time}&
 //                                     end_time={end_time}&
-function time_series(num,variable,datas){
+
+function time_series(num,variable,datas,numid){
     var cnt = datas.count;
     
     var values = [];
     var labl = datas["attributes"][variable]["LABL_PTR_1"];
-    //if(label == undefined)  !!!!!!!!!1
     values = datas["attributes"][labl]["VALUES"];
-
     var ycnt = values.length;
     var ytext = [];
     for(var i=0;i<ycnt;i++){
@@ -596,7 +688,7 @@ function time_series(num,variable,datas){
             title:ytext[i],
         };
         currentAxisHeight = currentAxisHeight + domainHeight + domainPadding;
-       }; 
+    }; 
     Plotly.newPlot('chart-istp'+num, data, layout,{displayModeBar: false});
 
     $('#istp_table'+num).html("");
@@ -644,41 +736,40 @@ function time_series(num,variable,datas){
             "searching":false,
             "order": [[1, "asc"],[0,"asc"]]
          });
-    var offset = 100;
-    var interval = function() {
-        var defer = $.Deferred();
-        $.ajax({
-            url: URL+"/data_sets/"+$("#data_sets"+num).val()+"/data?"
-             +"variables="+$("#variables"+num).val()
-             +"&start_time="+$("#starttimec"+num).val()+" "+$("#starttimed"+num).val()
-             +"&end_time="+$("#endtimec"+num).val()+" "+$("#endtimed"+num).val()
-             +"&offset="+offset
-             +"&number="+100,
-            type: "GET",
-            dataType: "JSON", 
-            beforeSend: function(request) {
-                token = window.sessionStorage.getItem('token');
-                request.setRequestHeader("Authorization", token);
-            },
-            success:function(data){
-                offset += 100;
-                // if (isRequst) {
-                //     isRequst = false;
-                //     window.setInterval("interval()", 3000);
-                // }
-                 defer.resolve(data);
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    clearInterval(interval);
-                    var result = eval("("+XMLHttpRequest.responseText+")");
-                           console.log(result.message);
-                        },
-        })
-        .done(function(data){
-            if(data["data"].length == 0) {clearInterval(interval);return;}
-            console.log(offset)
+   var offset = 100;
+   time_seriesx(variable,num,offset,numid);
+}
+function time_seriesx(variable,num,offset,numid)
+{
+    var defer = $.Deferred();
+     $.ajax({
+        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
+         +"variables="+variable
+         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
+         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
+         +"&offset="+offset
+         +"&number="+100,
+        type: "GET",
+        dataType: "JSON", 
+        beforeSend: function(request) {
+            token = window.sessionStorage.getItem('token');
+            request.setRequestHeader("Authorization", token);
+        },
+        success:function(data){
+            if(data["data"].length ==0) return;
+            offset += 100;
+            time_seriesx(variable,num,offset,numid);
+            defer.resolve(data);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                var result = eval("("+XMLHttpRequest.responseText+")");
+                       console.log(result.message);
+                    },
+    })
+    .done(function(data){
+        if(data["data"].length == 0) {}
+        else {
             var cnt = data.count;
-            
             var values = [];
             var labl = data["attributes"][variable]["LABL_PTR_1"];
             values = data["attributes"][labl]["VALUES"];
@@ -711,179 +802,144 @@ function time_series(num,variable,datas){
             for(var i=0;i<ycnt;i++){
                 cn[i]=i;
             }
-            console.log(xx);
             Plotly.extendTraces('chart-istp'+num, {x:xx,y:yy}, cn);
-       })
-    };
-    //interval();
-    
+            //======================================================
+            var add=[];
+            for(var i=0;i<x.length;i++){
+                add[i]=[];
+                add[i].push(x[i]);
+                for(var j=0;j<ycnt;j++){
+                    add[i].push(y[j][i]);
+                }
+            }
+            table.rows.add(add).draw();  
+        }
+   })
 }
-function sd(num)
-{   
-     $('#istp_table'+num).html("");
-    var html="";
-   var html2='<thead>' 
-            +'<tr>'
-            +'<th>time</th>' 
-            +'<th>'+"code"+'</th>'
-            +'</tr> '
-            +'</thead> '
-            +'<tfoot> '
-            +'<tr> '
-            +'<th>time</th> '
-            +'<th>code</th>'
-            +'</tr> '
-            +'</tfoot>';
-    obj = document.getElementById("istp_table"+num+"_wrapper");
-    if(obj){
-        $('#istp_table'+num).dataTable().fnDestroy();
-    }
-    $('#istp_table'+num).html(html2);
-    document.getElementById("tableistp"+num).style.display="block";
-    $('#istptable'+num).html("");
-    var html1='';
-    html1+='<tr>'
-                +'<td>'+1+'</td>'
-                +'<td>'+2+'</td>'
+function plasmagram(offset,num,variable,numid){
+    var defer = $.Deferred();
+    $.ajax({
+        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
+         +"variables="+variable
+         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
+         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
+         +"&offset="+offset
+         +"&number="+1,
+        type: "GET",
+        dataType: "JSON", 
+        beforeSend: function(request) {
+            token = window.sessionStorage.getItem('token');
+            request.setRequestHeader("Authorization", token);
+        },
+        success:function(data){
+            if(data["data"].length ==0) return;
+            offset += 1;
+            setTimeout(plasmagram(offset,num,variable,numid),5000);
+            defer.resolve(data);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                var result = eval("("+XMLHttpRequest.responseText+")");
+                       console.log(result.message);
+        },
+    }).done(function(datas){
+        var depend_1 = datas["attributes"][variable]["DEPEND_1"];
+        var depend_2 = datas["attributes"][variable]["DEPEND_2"];
+        
+        var xcnt = datas["data"][0][depend_1].length;
+        var ycnt = datas["data"][0][depend_2].length;
+
+        var x = [];
+        var y = [];
+        var z = [];
+        var data = [];
+        var time = format(datas["data"][0]["time_stamp"]*1000);
+        var cell = {"val":null,"id":null};
+        var cx = [];
+        var cy = [];
+        // sort x,y
+        for(var i=0;i<xcnt;i++) {
+            x[i] = datas["data"][0][depend_1][i];
+            cx[i] = {"val":x[i],"id":i};
+        }
+
+        for(var i=0;i<ycnt;i++) {
+            y[i] = datas["data"][0][depend_2][i];
+            cy[i] = {"val":y[i],"id":i};
+        }
+
+        cx.sort(function(a,b){return a.val>b.val;});
+        cy.sort(function(a,b){return a.val>b.val;});
+        for(var i=0;i<xcnt;i++) x[i] = cx[i].val;
+        for(var i=0;i<ycnt;i++) y[i] = cy[i].val;
+        for(var i=0;i<ycnt;i++){
+            z[i]=[];
+            for(var j=0;j<xcnt;j++){
+               z[i][j]=datas["data"][0][variable][cy[i].id][cx[j].id];
+            }
+        }
+
+        data = [{
+            x: x,
+            y: y,
+            z: z,
+            type: 'heatmap',
+            showlegend:false,
+        }];
+        
+        var layout = {
+            title:time,
+        };
+        
+        Plotly.newPlot('chart-istp'+num, data, layout,{displayModeBar: false});
+
+        $('#istp_table'+num).html("");
+        var html="";
+        for(var i=0;i<ycnt;i++){
+            html+='<th>'+depend_2+"_"+y[i]+'</th>'
+        }
+       var html2='<thead>' 
+                +'<tr>'
+                +'<th>'+depend_1+'</th>' 
+                +html
+                +'</tr> '
+                +'</thead> '
+                +'<tfoot> '
+                +'<tr> '
+                +'<th>'+depend_1+'</th>' 
+                +html
+                +'</tr> '
+                +'</tfoot>'
+                +'<tbody id="istptable'+num+'">'
+                +'</tbody>';
+        obj = document.getElementById("istp_table"+num+"_wrapper");
+        if(obj){
+            $('#istp_table'+num).dataTable().fnDestroy();
+        }
+        $('#istp_table'+num).html(html2);
+        document.getElementById("tableistp"+num).style.display="block";
+        $('#istptable'+num).html("");
+        var html1='';
+        for(var i=0;i<xcnt;i++){
+            var yhtml = "";
+            for(var j=0;j<ycnt;j++){
+                yhtml+='<td>'+z[j][i]+'</td>'
+            }
+            html1+='<tr>'
+                +'<td>'+x[i]+'</td>'
+                +yhtml
                 +'</tr>';
-    console.log(html1);
-    $('#istptable'+num).html(html1);
-
-    table=$('#istp_table'+num).DataTable({
-            
-            "searching":false,
-            "order": [[1, "asc"],[0,"asc"]]
-         });
-         
-
-}
-function plasmagram(num,variable){
-    var deferreds = [];
-
-    var i = 1;
-    offset = 0;
-    for (i = 1; i <= 1; i++) {
-        var defer = $.Deferred();
-        $.ajax({
-            url: URL+"/data_sets/"+$("#data_sets"+num).val()+"/data?"
-             +"variables="+$("#variables"+num).val()
-             +"&start_time="+$("#starttimec"+num).val()+" "+$("#starttimed"+num).val()
-             +"&end_time="+$("#endtimec"+num).val()+" "+$("#endtimed"+num).val()
-             +"&offset="+offset
-             +"&number="+1,
-            type: "GET",
-            dataType: "JSON", 
-            beforeSend: function(request) {
-                token = window.sessionStorage.getItem('token');
-                request.setRequestHeader("Authorization", token);
-            },
-            success:function(data){
-                 defer.resolve(data);
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    var result = eval("("+XMLHttpRequest.responseText+")");
-                           console.log(result.message);
-            },
-        }).done(function(data){
-            plasmagramx(num,variable,data);
-        })
-        deferreds.push(defer);
-        offset+=1;
-    }
-    return deferreds;
-}
-function plasmagramx(num,variable,datas){
-    var depend_1 = datas["attributes"][variable]["DEPEND_1"];
-    var depend_2 = datas["attributes"][variable]["DEPEND_2"];
-    console.log(depend_1);
-    console.log(depend_2);
-    
-    var xcnt = datas["data"][0][depend_1].length;
-    var ycnt = datas["data"][0][depend_2].length;
-
-    var x = [];
-    var y = [];
-    var z = [];
-    var data = [];
-    var time = format(datas["data"][0]["time_stamp"]*1000);
-    
-    for(var i=0;i<xcnt;i++) x[i] = datas["data"][0][depend_1][i];
-    for(var i=0;i<ycnt;i++) y[i] = datas["data"][0][depend_2][i];
-    for(var i=0;i<ycnt;i++){
-        z[i]=[];
-        for(var j=0;j<xcnt;j++){
-            z[i][j]=datas["data"][0][variable][i][j];
         }
-    }
-    console.log(x);
-    console.log(y);
-    console.log(z);
 
-    data = [{
-        x: x,
-        y: y,
-        z: z,
-        type: 'heatmap',
-        showlegend:false,
-    }];
-    
-    var layout = {
-        title:time,
-        autosize: true, 
-        xaxis: {
-        autorange: true, 
-        }
-    };
-    console.log(x);
-    Plotly.newPlot('chart-istp'+num, data, layout,{displayModeBar: false});
+        $('#istptable'+num).html(html1);
 
-    $('#istp_table'+num).html("");
-    var html="";
-    for(var i=0;i<ycnt;i++){
-        html+='<th>'+depend_2+"_"+y[i]+'</th>'
-    }
-   var html2='<thead>' 
-            +'<tr>'
-            +'<th>'+depend_1+'</th>' 
-            +html
-            +'</tr> '
-            +'</thead> '
-            +'<tfoot> '
-            +'<tr> '
-            +'<th>'+depend_1+'</th>' 
-            +html
-            +'</tr> '
-            +'</tfoot>'
-            +'<tbody id="istptable'+num+'">'
-            +'</tbody>';
-    obj = document.getElementById("istp_table"+num+"_wrapper");
-    if(obj){
-        $('#istp_table'+num).dataTable().fnDestroy();
-    }
-    $('#istp_table'+num).html(html2);
-    document.getElementById("tableistp"+num).style.display="block";
-    $('#istptable'+num).html("");
-    var html1='';
-    for(var i=0;i<xcnt;i++){
-        var yhtml = "";
-        for(var j=0;j<ycnt;j++){
-            yhtml+='<td>'+z[j][i]+'</td>'
-        }
-        html1+='<tr>'
-            +'<td>'+x[i]+'</td>'
-            +yhtml
-            +'</tr>';
-    }
-
-    $('#istptable'+num).html(html1);
-
-    table=$('#istp_table'+num).DataTable({
-            
-            "searching":false,
-            "order": [[1, "asc"],[0,"asc"]]
-         });
+        table=$('#istp_table'+num).DataTable({
+                
+                "searching":false,
+                "order": [[1, "asc"],[0,"asc"]]
+             });
+    })
 }
-function spectrogram(num,variable,datas){
+function spectrogram(num,variable,datas,numid){
     var cnt = datas.count;
     
     var values = [];
@@ -922,7 +978,7 @@ function spectrogram(num,variable,datas){
     var layout = {
         title:variable,
         autosize: true, 
-        //height: 800, 
+
         xaxis: {
         autorange: true, 
         type: "date"
@@ -976,18 +1032,133 @@ function spectrogram(num,variable,datas){
             "searching":false,
             "order": [[1, "asc"],[0,"asc"]]
          });
+    var offset = 100;
+   // spectrogramx(offset,num,variable,numid);
 }
-function stack_plot(num,variable,datas){
+function spectrogramx(offset,num,variable,numid){
+    var defer = $.Deferred();
+    $.ajax({
+        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
+         +"variables="+variable
+         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
+         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
+         +"&offset="+offset
+         +"&number="+100,
+        type: "GET",
+        dataType: "JSON", 
+        beforeSend: function(request) {
+            token = window.sessionStorage.getItem('token');
+            request.setRequestHeader("Authorization", token);
+        },
+        success:function(data){
+            if(data["data"].length ==0) return;
+            offset += 100;
+            spectrogramx(offset,num,variable,numid);
+            defer.resolve(data);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                var result = eval("("+XMLHttpRequest.responseText+")");
+                       console.log(result.message);
+                    },
+    })
+   .done(function(datas){
+        var cnt = datas.count;
+        var values = [];
+        var depend_1 = datas["attributes"][variable]["DEPEND_1"];
+        values = datas["attributes"][depend_1]["VALUES"];
+
+        var ycnt = values.length;
+        var y = [];
+        for(var i=0;i<ycnt;i++){
+            y[i] = values[i];
+        }
+        var x = [];
+        var z = [];
+        var data = [];
+
+        for(var i=0;i<cnt;i++){
+            x[i] = format(datas["data"][i]["time_stamp"]*1000);
+        }
+        for(var i=0;i<ycnt;i++){
+            z[i]=[];
+            for(var j=0;j<cnt;j++){
+                z[i][j]=datas["data"][j][variable][i];
+            }
+        }
+
+        data = [{
+            x: x,
+            y: y,
+            z: z,
+            type: 'heatmap',
+            name:datas["attributes"][depend_1]["LABLAXIS"],
+            showlegend:false,
+        }];
+        
+        var layout = {
+            title:variable,
+            autosize: true, 
+
+            xaxis: {
+            autorange: true, 
+            type: "date"
+            }
+        };
+
+        Plotly.extendTraces('chart-istp'+num, data, layout,{displayModeBar: false});
+
+        $('#istp_table'+num).html("");
+        var html="";
+        for(var i=0;i<ycnt;i++){
+            html+='<th>'+depend_1+"_"+y[i]+'</th>'
+        }
+       var html2='<thead>' 
+                +'<tr>'
+                +'<th>time</th>' 
+                +html
+                +'</tr> '
+                +'</thead> '
+                +'<tfoot> '
+                +'<tr> '
+                +'<th>time</th> '
+                +html
+                +'</tr> '
+                +'</tfoot>'
+                +'<tbody id="istptable'+num+'">'
+                +'</tbody>';
+        obj = document.getElementById("istp_table"+num+"_wrapper");
+        if(obj){
+            $('#istp_table'+num).dataTable().fnDestroy();
+        }
+        $('#istp_table'+num).html(html2);
+        document.getElementById("tableistp"+num).style.display="block";
+        $('#istptable'+num).html("");
+        var html1='';
+        for(var i=0;i<x.length;i++){
+            var yhtml = "";
+            for(var j=0;j<ycnt;j++){
+                yhtml+='<td>'+z[j][i]+'</td>'
+            }
+            html1+='<tr>'
+                +'<td>'+x[i]+'</td>'
+                +yhtml
+                +'</tr>';
+        }
+
+        $('#istptable'+num).html(html1);
+
+        table=$('#istp_table'+num).DataTable({
+                
+                "searching":false,
+                "order": [[1, "asc"],[0,"asc"]]
+             });
+    })
+}
+function stack_plot(num,variable,datas,numid){
     var cnt = datas.count;
     
     var values = [];
-    //var depend_1 = datas["attributes"][variable]["DEPEND_1"];
-    //values = datas["attributes"][depend_1]["VALUES"];
-
-//if(values == undefined) !!!!!!VALIDMAX VALIDMIN
     var ycnt = datas["data"][0][variable].length;
-    console.log(ycnt);
-
     var x = [];
     var y = [];
     var data = [];
@@ -1070,8 +1241,102 @@ function stack_plot(num,variable,datas){
             "searching":false,
             "order": [[1, "asc"],[0,"asc"]]
          });
+    var offset = 100;
+    stack_plotx(offset,num,variable,numid);
 }
-function istpchart(num){
+function stack_plotx(offset,num,variable,numid){
+    var defer = $.Deferred();
+    $.ajax({
+        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
+         +"variables="+variable
+         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
+         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
+         +"&offset="+offset
+         +"&number="+100,
+        type: "GET",
+        dataType: "JSON", 
+        beforeSend: function(request) {
+            token = window.sessionStorage.getItem('token');
+            request.setRequestHeader("Authorization", token);
+        },
+        success:function(data){
+            if(data["data"].length ==0) return;
+            offset += 100;
+            stack_plotx(offset,num,variable,numid); 
+            defer.resolve(data);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                var result = eval("("+XMLHttpRequest.responseText+")");
+                       console.log(result.message);
+                    },
+    })
+   .done(function(datas){
+        var cnt = datas.count;
+        var values = [];
+        var ycnt = datas["data"][0][variable].length;
+    
+        var x = [];
+        var y = [];
+        var data = [];
+
+        for(var i=0;i<cnt;i++){
+            x[i] = format(datas["data"][i]["time_stamp"]*1000);
+        }
+        for(var i=0;i<ycnt;i++){
+            y[i]=[];
+            for(var j=0;j<cnt;j++){
+                y[i][j]=datas["data"][j][variable][i];
+            }
+        }
+        var xx = [];
+        var yy = [];
+        for(var i=0;i<ycnt;i++){
+            xx.push(x);
+            yy.push(y[i]);
+        }
+        var cn = [];
+        for(var i=0;i<ycnt;i++){
+            cn[i]=i;
+        }
+        Plotly.extendTraces('chart-istp'+num, {x:xx,y:yy}, cn);
+
+        var add=[];
+        for(var i=0;i<x.length;i++){
+            add[i]=[];
+            add[i].push(x[i]);
+            for(var j=0;j<ycnt;j++){
+                add[i].push(y[j][i]);
+            }
+        }
+        table.rows.add(add).draw();  
+    })
+}
+var ArrayVar = [];
+function addmuli(num,numid)
+{
+    var html1 = '<div class="loading" id="loadinga'+num+'" style="display:block;"> <img src="loading2.gif" alt="loading" style="position: absolute;top: 50%;left: 50%;"/></div>'
+    $("#graph_mult"+numid).append(html1);                                 
+    $("#graph_mult"+numid).append('<div id="chart-istp'+num+'"></div>');
+    var html='<div id="tableistp'+num+'" style="display:none;overflow-x: auto;">'
+             +'<table id="istp_table'+num+'" class="cell-border" cellspacing="0" width="100%">' 
+             +'<tbody id="istptable'+num+'"></tbody>' 
+             +'</table>' 
+             +'</div>';
+    $("#table_mult"+numid).append(html);
+}
+function istpchart(num) {
+    $("#graph_mult"+num).html("");
+    $("#table_mult"+num).html("");
+    ArrayVar = $("#variables"+num).multiselect("getChecked").map(function(){
+            return this.value; 
+        }).get();
+    istpchartx(num,0);
+   if(num+1<=istpNum) istpchart(num+1);
+};
+
+function istpchartx(numid,id){
+    var num = numid + "a" + id;
+    addmuli(num,numid);
     TESTER = document.getElementById('chart-istp'+num);
     TESTER.innerHTML=" ";
     var x=[];
@@ -1079,10 +1344,10 @@ function istpchart(num){
     var offset = 0;
     var defer = $.Deferred();
     $.ajax({
-        url: URL+"/data_sets/"+$("#data_sets"+num).val()+"/data?"
-         +"variables="+$("#variables"+num).val()
-         +"&start_time="+$("#starttimec"+num).val()+" "+$("#starttimed"+num).val()
-         +"&end_time="+$("#endtimec"+num).val()+" "+$("#endtimed"+num).val()
+        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
+         +"variables="+ArrayVar[id]
+         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
+         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
          +"&offset="+offset
          +"&number="+100,
         type: "GET",
@@ -1101,7 +1366,7 @@ function istpchart(num){
     })
    .done(function(data){
         document.getElementById("loadinga"+num).style.display="none";
-        var variable = $("#variables"+num).val();
+        var variable = ArrayVar[id];
         if(data["attributes"][variable]["DISPLAY_TYPE"] == undefined){
             alert("NO DISPLAY_TYPE");
         }else if(data["data"].length == 0){
@@ -1109,76 +1374,74 @@ function istpchart(num){
         }else {
             if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='p'){//plasmagram
 
-                plasmagram(num,variable);
+                plasmagram(0,num,variable,numid);
             }else if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
                 //alert("time_series");
-                time_series(num,variable,data);
+                time_series(num,variable,data,numid);
 
             }else{
                 if(data["attributes"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
-                alert("stack_plot");
-                stack_plot(num,variable,data);
+               // alert("stack_plot");
+                stack_plot(num,variable,data,numid);
 
                 }else{//spectrogram
-                    alert("spectrogram");
-                    spectrogram(num,variable,data);
+                    //alert("spectrogram");
+                    var depend1 = data["attributes"][variable]["DEPEND_1"];
+                    if(data["attributes"][depend1]["VAR_TYPE"] == "ignore_data")
+                        alert("ignore_data");
+                    else 
+                        spectrogram(num,variable,data,numid);
                 }
             }
-        }
-        if(data["attributes"][variable]["DISPLAY_TYPE"]=="time_series"){
-             time_series(num,variable,data);
-            return;
-        }        
- 
+        }   
     })
+    if(id+1<ArrayVar.length) istpchartx(numid,id+1);
 }
-
-
-function test() {
-    var deferreds = [];
-
-    var i = 1;
-    offset = 0;
-    for (i = 1; i <= 5; i++) {
-        Tn++;
-        var defer = $.Deferred();
-        $.ajax({
-            url: URL+"/data_sets/"+$("#data_sets"+num).val()+"/data?"
-             +"variables="+$("#variables"+num).val()
-             +"&start_time="+$("#starttimec"+num).val()+" "+$("#starttimed"+num).val()
-             +"&end_time="+$("#endtimec"+num).val()+" "+$("#endtimed"+num).val()
-             +"&offset="+offset
-             +"&number="+1,
-            type: "GET",
-            dataType: "JSON", 
-            beforeSend: function(request) {
-                token = window.sessionStorage.getItem('token');
-                request.setRequestHeader("Authorization", token);
-            },
-            success:function(data){
-                 defer.resolve(data);
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    var result = eval("("+XMLHttpRequest.responseText+")");
-                           console.log(result.message);
-            },
-        }).done(function(data){
-                console.log(data);
-        })
-        deferreds.push(defer);
-        offset+=1;
-    }
-    return deferreds;
-}
- 
 function istpsearch(){
     num=0;
-    document.getElementById("loadinga"+num).style.display="";
+   // document.getElementById("loadinga"+num).style.display="";
     istpchart(0);
-    //test();
 }
+
+
 /*
  <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" />
 
 */
+// function test() {
+//     var deferreds = [];
+
+//     var i = 1;
+//     offset = 0;
+//     for (i = 1; i <= 5; i++) {
+//         Tn++;
+//         var defer = $.Deferred();
+//         $.ajax({
+//             url: URL+"/data_sets/"+$("#data_sets"+num).val()+"/data?"
+//              +"variables="+$("#variables"+num).val()
+//              +"&start_time="+$("#starttimec"+num).val()+" "+$("#starttimed"+num).val()
+//              +"&end_time="+$("#endtimec"+num).val()+" "+$("#endtimed"+num).val()
+//              +"&offset="+offset
+//              +"&number="+1,
+//             type: "GET",
+//             dataType: "JSON", 
+//             beforeSend: function(request) {
+//                 token = window.sessionStorage.getItem('token');
+//                 request.setRequestHeader("Authorization", token);
+//             },
+//             success:function(data){
+//                  defer.resolve(data);
+//             },
+//             error: function(XMLHttpRequest, textStatus, errorThrown) {
+//                     var result = eval("("+XMLHttpRequest.responseText+")");
+//                            console.log(result.message);
+//             },
+//         }).done(function(data){
+//                 console.log(data);
+//         })
+//         deferreds.push(defer);
+//         offset+=1;
+//     }
+//     return deferreds;
+// }
