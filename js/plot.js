@@ -491,7 +491,6 @@ function linex(offset,num){
         success:function(data){
             offset += 100;
             if(data["data"].length != 0){
-                console.log(offset);
                 linex(offset,num);
                 defer.resolve(data);
             }
@@ -507,14 +506,18 @@ function linex(offset,num){
             x.push(x1);
             y.push(info[$("#term"+num).val()]);
         });
-        Plotly.extendTraces(TESTER, {x:x,y:y},0);
-        var add=[];
-            for(var i=0;i<x.length;i++){
-                add[i]=[];
-                add[i].push(x[i]);
-                add[i].push(y[i]);
-            }
-            table.rows.add(add).draw(); 
+        var xx=[];
+        var yy=[];
+        xx.push(x);
+        yy.push(y);
+        Plotly.extendTraces(TESTER, {x:xx,y:yy},[0]);
+        // var add=[];
+        // for(var i=0;i<x.length;i++){
+        //     add[i]=[];
+        //     add[i].push(x[i]);
+        //     add[i].push(y[i]);
+        // }
+        // table.rows.add(add).draw(); 
        //=========================================================================
        $('#contour_table'+num).html("");
        var html2='<thead>' 
@@ -605,20 +608,20 @@ function Logoutbtn(){
     window.location.href='login.html';
 }
 
-function search(){
-    line(0);
-    // for(var num=0;num<=SelectNum;num++)
-    // {
-    //     if($("#iaga_part"+num).length>0){
-    //         //console.log(num);
+// function search(){
+//     line(0);
+//     // for(var num=0;num<=SelectNum;num++)
+//     // {
+//     //     if($("#iaga_part"+num).length>0){
+//     //         //console.log(num);
 
-    //         document.getElementById("tablepart"+num).style.display="none";
-    //         document.getElementById("loading"+num).style.display="block";
-    //         document.getElementById("select_timespan"+num).style.display="none";
-    //         line(num);
-    //     }
-    // }   
-}
+//     //         document.getElementById("tablepart"+num).style.display="none";
+//     //         document.getElementById("loading"+num).style.display="block";
+//     //         document.getElementById("select_timespan"+num).style.display="none";
+//     //         line(num);
+//     //     }
+//     // }   
+// }
 //=======================================================================
 // /istp/data_sets/{data_set}/data?
 //                                     variables={variables}&
@@ -629,13 +632,21 @@ function time_series(num,variable,datas,numid){
     var cnt = datas.count;
     
     var values = [];
+    var ycnt,ytext=[];
     var labl = datas["attributes"][variable]["LABL_PTR_1"];
-    values = datas["attributes"][labl]["VALUES"];
-    var ycnt = values.length;
-    var ytext = [];
-    for(var i=0;i<ycnt;i++){
-        ytext[i] = values[i];
+    if(labl == undefined){
+        ycnt = 1;
+        ytext[0] =variable;
     }
+    else
+    {
+        values = datas["attributes"][labl]["VALUES"];
+        ycnt = values.length;
+        ytext = [];
+        for(var i=0;i<ycnt;i++)
+            ytext[i] = values[i];
+    }
+
     var x = [];
     var y = [];
     var data = [];
@@ -643,53 +654,68 @@ function time_series(num,variable,datas,numid){
     for(var i=0;i<cnt;i++){
         x[i] = format(datas["data"][i]["time_stamp"]*1000);
     }
-    for(var i=0;i<ycnt;i++){
-        y[i]=[];
-        for(var j=0;j<cnt;j++){
-            y[i][j]=datas["data"][j][variable][i];
+    if(labl == undefined){
+       for(var j=0;j<cnt;j++){
+                y[j]=datas["data"][j][variable];
+        } 
+        data = [{
+            x: x,
+            y: y,
+            mode: "lines+markers", 
+            name: ytext[0], 
+            type: "scatter", 
+            showlegend:false,
+        }];
+        Plotly.newPlot('chart-istp'+num, data, {displayModeBar: false});
+    }else{
+        for(var i=0;i<ycnt;i++){
+            y[i]=[];
+            for(var j=0;j<cnt;j++){
+                y[i][j]=datas["data"][j][variable][i];
+            }
         }
-    }
 
-    for(var i=0;i<ycnt;i++){
-        var t = i + 1;
-        var trace = {
-                x: x,
-                y: y[i],
-                mode: "lines+markers", 
-                name: ytext[i], 
-                yaxis: 'y'+t,
-                type: "scatter", 
-                showlegend:false,
-            };
-        data.push(trace);
-    }
-
-    var layout = {
-        autosize: true, 
-        height: 800, 
-        xaxis: {
-        autorange: true, 
-        type: "date"
-        }
-    };
-
-    var domainHeight = (1 / data.length) * 0.99;
-    var domainPadding = (1 / data.length) * 0.01;
-    var currentAxisHeight = 0;
-
-    for(let i = 0; i < data.length; ++i){
-        let domain = [currentAxisHeight, currentAxisHeight + domainHeight];
-        layout['yaxis' + (i + 1)] = {
+        for(var i=0;i<ycnt;i++){
+            var t = i + 1;
+            var trace = {
+                    x: x,
+                    y: y[i],
+                    mode: "lines+markers", 
+                    name: ytext[i], 
+                    yaxis: 'y'+t,
+                    type: "scatter", 
+                    showlegend:false,
+                };
+            data.push(trace);
+        }   
+    
+        var layout = {
+            autosize: true, 
+            height: 800, 
+            xaxis: {
             autorange: true, 
-            showline: true, 
-            tickmode: "auto", 
-            type: "linear",
-            domain: domain,
-            title:ytext[i],
+            type: "date"
+            }
         };
-        currentAxisHeight = currentAxisHeight + domainHeight + domainPadding;
-    }; 
-    Plotly.newPlot('chart-istp'+num, data, layout,{displayModeBar: false});
+
+        var domainHeight = (1 / data.length) * 0.99;
+        var domainPadding = (1 / data.length) * 0.01;
+        var currentAxisHeight = 0;
+
+        for(let i = 0; i < data.length; ++i){
+            let domain = [currentAxisHeight, currentAxisHeight + domainHeight];
+            layout['yaxis' + (i + 1)] = {
+                autorange: true, 
+                showline: true, 
+                tickmode: "auto", 
+                type: "linear",
+                domain: domain,
+                title:ytext[i],
+            };
+            currentAxisHeight = currentAxisHeight + domainHeight + domainPadding;
+        }; 
+        Plotly.newPlot('chart-istp'+num, data, layout,{displayModeBar: false});
+    }
 
     $('#istp_table'+num).html("");
     var html="";
@@ -737,84 +763,83 @@ function time_series(num,variable,datas,numid){
             "order": [[1, "asc"],[0,"asc"]]
          });
    var offset = 100;
-   time_seriesx(variable,num,offset,numid);
+   //time_seriesx(variable,num,offset,numid);
 }
-function time_seriesx(variable,num,offset,numid)
+//time_seriesx(variable,num,numid,data);
+function time_seriesx(variable,num,numid,datas)
 {
-    var defer = $.Deferred();
-     $.ajax({
-        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
-         +"variables="+variable
-         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
-         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
-         +"&offset="+offset
-         +"&number="+100,
-        type: "GET",
-        dataType: "JSON", 
-        beforeSend: function(request) {
-            token = window.sessionStorage.getItem('token');
-            request.setRequestHeader("Authorization", token);
-        },
-        success:function(data){
-            if(data["data"].length ==0) return;
-            offset += 100;
-            time_seriesx(variable,num,offset,numid);
-            defer.resolve(data);
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                var result = eval("("+XMLHttpRequest.responseText+")");
-                       console.log(result.message);
-                    },
-    })
-    .done(function(data){
-        if(data["data"].length == 0) {}
-        else {
-            var cnt = data.count;
-            var values = [];
-            var labl = data["attributes"][variable]["LABL_PTR_1"];
-            values = data["attributes"][labl]["VALUES"];
+    var cnt = datas.count;
+    var values = [];
+    var ycnt,ytext=[];
+    var labl = datas["attributes"][variable]["LABL_PTR_1"];
+    if(labl == undefined){
+        ycnt = 1;
+        ytext[0] =variable;
+    }
+    else
+    {
+        values = datas["attributes"][labl]["VALUES"];
+        ycnt = values.length;
+        ytext = [];
+        for(var i=0;i<ycnt;i++)
+            ytext[i] = values[i];
+    }
 
-            var ycnt = values.length;
-            var ytext = [];
-            for(var i=0;i<ycnt;i++){
-                ytext[i] = values[i];
-            }
-            var x = [];
-            var y = [];
-            var data2 = [];
+    var x = [];
+    var y = [];
+    var data = [];
 
-            for(var i=0;i<cnt;i++){
-                x[i] = format(data["data"][i]["time_stamp"]*1000);
+    for(var i=0;i<cnt;i++){
+        x[i] = format(datas["data"][i]["time_stamp"]*1000);
+    }
+    if(labl == undefined){
+       for(var j=0;j<cnt;j++){
+                y[j]=datas["data"][j][variable];
+        } 
+        var xx = [];
+        var yy = [];
+        xx.push(x);
+        yy.push(y);
+       Plotly.extendTraces('chart-istp'+num, {x:xx,y:yy}, [0]);
+
+        var add=[];
+        for(var i=0;i<x.length;i++){
+            add[i].push(x[i]);
+            for(var j=0;j<ycnt;j++){
+                add[i].push(y[j]);
             }
-            for(var i=0;i<ycnt;i++){
-                y[i]=[];
-                for(var j=0;j<cnt;j++){
-                    y[i][j]=data["data"][j][variable][i];
-                }
-            }
-            var xx = [];
-            var yy = [];
-            for(var i=0;i<ycnt;i++){
-                xx.push(x);
-                yy.push(y[i]);
-            }
-            var cn = [];
-            for(var i=0;i<ycnt;i++){
-                cn[i]=i;
-            }
-            Plotly.extendTraces('chart-istp'+num, {x:xx,y:yy}, cn);
-            //======================================================
-            var add=[];
-            for(var i=0;i<x.length;i++){
-                add[i]=[];
-                add[i].push(x[i]);
-                for(var j=0;j<ycnt;j++){
-                    add[i].push(y[j][i]);
-                }
-            }
-            table.rows.add(add).draw();  
         }
-   })
+        table.rows.add(add).draw();  
+    }else{
+        for(var i=0;i<ycnt;i++){
+            y[i]=[];
+            for(var j=0;j<cnt;j++){
+                y[i][j]=datas["data"][j][variable][i];
+            }
+        }
+        var xx = [];
+        var yy = [];
+        for(var i=0;i<ycnt;i++){
+            xx.push(x);
+            yy.push(y[i]);
+        }
+        var cn = [];
+        for(var i=0;i<ycnt;i++){
+            cn[i]=i;
+        }
+        Plotly.extendTraces('chart-istp'+num, {x:xx,y:yy}, cn);
+
+        var add=[];
+        for(var i=0;i<x.length;i++){
+            add[i]=[];
+            add[i].push(x[i]);
+            for(var j=0;j<ycnt;j++){
+                add[i].push(y[j][i]);
+            }
+        }
+        table.rows.add(add).draw(); 
+    }
+           
 }
 function plasmagram(offset,num,variable,numid){
     var defer = $.Deferred();
@@ -1028,14 +1053,13 @@ function spectrogram(num,variable,datas,numid){
     $('#istptable'+num).html(html1);
 
     table=$('#istp_table'+num).DataTable({
-            
             "searching":false,
             "order": [[1, "asc"],[0,"asc"]]
          });
     var offset = 100;
-   // spectrogramx(offset,num,variable,numid);
+   // spectrogramx(offset,num,variable,numid,x,y,z);
 }
-function spectrogramx(offset,num,variable,numid){
+function spectrogramx(offset,num,variable,numid,x,y,z){
     var defer = $.Deferred();
     $.ajax({
         url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
@@ -1053,7 +1077,7 @@ function spectrogramx(offset,num,variable,numid){
         success:function(data){
             if(data["data"].length ==0) return;
             offset += 100;
-            spectrogramx(offset,num,variable,numid);
+            spectrogramx(offset,num,variable,numid,x,y,z);
             defer.resolve(data);
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -1068,44 +1092,37 @@ function spectrogramx(offset,num,variable,numid){
         values = datas["attributes"][depend_1]["VALUES"];
 
         var ycnt = values.length;
-        var y = [];
-        for(var i=0;i<ycnt;i++){
-            y[i] = values[i];
-        }
-        var x = [];
-        var z = [];
+
         var data = [];
 
         for(var i=0;i<cnt;i++){
-            x[i] = format(datas["data"][i]["time_stamp"]*1000);
+            x.push(format(datas["data"][i]["time_stamp"]*1000));
         }
         for(var i=0;i<ycnt;i++){
-            z[i]=[];
             for(var j=0;j<cnt;j++){
-                z[i][j]=datas["data"][j][variable][i];
+                z[i].push(datas["data"][j][variable][i]);
             }
         }
+       data = [{
+        x: x,
+        y: y,
+        z: z,
+        type: 'heatmap',
+        name:datas["attributes"][depend_1]["LABLAXIS"],
+        showlegend:false,
+    }];
+    
+    var layout = {
+        title:variable,
+        autosize: true, 
 
-        data = [{
-            x: x,
-            y: y,
-            z: z,
-            type: 'heatmap',
-            name:datas["attributes"][depend_1]["LABLAXIS"],
-            showlegend:false,
-        }];
-        
-        var layout = {
-            title:variable,
-            autosize: true, 
+        xaxis: {
+        autorange: true, 
+        type: "date"
+        }
+    };
 
-            xaxis: {
-            autorange: true, 
-            type: "date"
-            }
-        };
-
-        Plotly.extendTraces('chart-istp'+num, data, layout,{displayModeBar: false});
+    Plotly.newPlot('chart-istp'+num, data, layout,{displayModeBar: false});
 
         $('#istp_table'+num).html("");
         var html="";
@@ -1242,74 +1259,48 @@ function stack_plot(num,variable,datas,numid){
             "order": [[1, "asc"],[0,"asc"]]
          });
     var offset = 100;
-    stack_plotx(offset,num,variable,numid);
+    //stack_plotx(offset,num,variable,numid);
 }
-function stack_plotx(offset,num,variable,numid){
-    var defer = $.Deferred();
-    $.ajax({
-        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
-         +"variables="+variable
-         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
-         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
-         +"&offset="+offset
-         +"&number="+100,
-        type: "GET",
-        dataType: "JSON", 
-        beforeSend: function(request) {
-            token = window.sessionStorage.getItem('token');
-            request.setRequestHeader("Authorization", token);
-        },
-        success:function(data){
-            if(data["data"].length ==0) return;
-            offset += 100;
-            stack_plotx(offset,num,variable,numid); 
-            defer.resolve(data);
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                var result = eval("("+XMLHttpRequest.responseText+")");
-                       console.log(result.message);
-                    },
-    })
-   .done(function(datas){
-        var cnt = datas.count;
-        var values = [];
-        var ycnt = datas["data"][0][variable].length;
-    
-        var x = [];
-        var y = [];
-        var data = [];
+ //time_seriesx(variable,num,numid,data);
+function stack_plotx(variable,num,numid,datas){
+    var cnt = datas.count;
+    var values = [];
+    var ycnt = datas["data"][0][variable].length;
 
-        for(var i=0;i<cnt;i++){
-            x[i] = format(datas["data"][i]["time_stamp"]*1000);
-        }
-        for(var i=0;i<ycnt;i++){
-            y[i]=[];
-            for(var j=0;j<cnt;j++){
-                y[i][j]=datas["data"][j][variable][i];
-            }
-        }
-        var xx = [];
-        var yy = [];
-        for(var i=0;i<ycnt;i++){
-            xx.push(x);
-            yy.push(y[i]);
-        }
-        var cn = [];
-        for(var i=0;i<ycnt;i++){
-            cn[i]=i;
-        }
-        Plotly.extendTraces('chart-istp'+num, {x:xx,y:yy}, cn);
+    var x = [];
+    var y = [];
+    var data = [];
 
-        var add=[];
-        for(var i=0;i<x.length;i++){
-            add[i]=[];
-            add[i].push(x[i]);
-            for(var j=0;j<ycnt;j++){
-                add[i].push(y[j][i]);
-            }
+    for(var i=0;i<cnt;i++){
+        x[i] = format(datas["data"][i]["time_stamp"]*1000);
+    }
+    for(var i=0;i<ycnt;i++){
+        y[i]=[];
+        for(var j=0;j<cnt;j++){
+            y[i][j]=datas["data"][j][variable][i];
         }
-        table.rows.add(add).draw();  
-    })
+    }
+    var xx = [];
+    var yy = [];
+    for(var i=0;i<ycnt;i++){
+        xx.push(x);
+        yy.push(y[i]);
+    }
+    var cn = [];
+    for(var i=0;i<ycnt;i++){
+        cn[i]=i;
+    }
+    Plotly.extendTraces('chart-istp'+num, {x:xx,y:yy}, cn);
+
+    var add=[];
+    for(var i=0;i<x.length;i++){
+        add[i]=[];
+        add[i].push(x[i]);
+        for(var j=0;j<ycnt;j++){
+            add[i].push(y[j][i]);
+        }
+    }
+    table.rows.add(add).draw();  
 }
 var ArrayVar = [];
 function addmuli(num,numid)
@@ -1327,20 +1318,137 @@ function addmuli(num,numid)
 function istpchart(num) {
     $("#graph_mult"+num).html("");
     $("#table_mult"+num).html("");
+    ArrayVar = [];
     ArrayVar = $("#variables"+num).multiselect("getChecked").map(function(){
             return this.value; 
         }).get();
-    istpchartx(num,0);
+  istpchartx(num);
    if(num+1<=istpNum) istpchart(num+1);
 };
+function istpchartxx(offset,numid)
+{
+    var defer = $.Deferred();
+    $.ajax({
+        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
+         +"variables="+ArrayVar.join(",")
+         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
+         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
+         +"&offset="+offset
+         +"&number="+10,
+        type: "GET",
+        dataType: "JSON", 
+        beforeSend: function(request) {
+            token = window.sessionStorage.getItem('token');
+            request.setRequestHeader("Authorization", token);
+        },
+        success:function(data){
+            offset += 100;
+            if(data["data"].length == 0) return;
+            istpchartxx(offset,numid);
+            defer.resolve(data);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown){
+                var result = eval("("+XMLHttpRequest.responseText+")");
+                       console.log(result.message);
+                    },
+    })
+   .done(function(data){
+        var n = ArrayVar.length;
+        for(var id=0; id<n; id++)
+        {
+            var num = numid + "a" + id;
+            var variable = ArrayVar[id];
+            
+    
+            if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='p'){//plasmagram
+                console.log("plasmagram");
+                //plasmagramx(variable,num,numid,data);
+            }else if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
+                
+                time_seriesx(variable,num,numid,data);
 
-function istpchartx(numid,id){
+            }else{
+                if(data["attributes"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
+             
+               stack_plotx(variable,num,numid,data);
+
+                }else{ 
+                    console.log("spectrogram");
+                  //  spectrogramx(num,variable,data,numid);
+                }
+            }
+              
+        }
+    })
+}
+function istpchartx(numid)
+{
+    var offset = 0;
+    var defer = $.Deferred();
+    $.ajax({
+        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
+         +"variables="+ArrayVar.join(",")
+         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
+         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
+         +"&offset="+offset
+         +"&number="+10,
+        type: "GET",
+        dataType: "JSON", 
+        beforeSend: function(request) {
+            token = window.sessionStorage.getItem('token');
+            request.setRequestHeader("Authorization", token);
+        },
+        success:function(data){
+            offset += 100;
+             defer.resolve(data);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                var result = eval("("+XMLHttpRequest.responseText+")");
+                       console.log(result.message);
+                    },
+    })
+   .done(function(data){
+        var n = ArrayVar.length;
+        for(var id=0; id<n; id++)
+        {
+            var num = numid + "a" + id;
+            addmuli(num,numid);
+            document.getElementById("loadinga"+num).style.display="none";
+            var variable = ArrayVar[id];
+            if(data["attributes"][variable]["DISPLAY_TYPE"] == undefined){
+                alert("NO DISPLAY_TYPE");
+            }else if(data["data"].length == 0){
+                alert("NO DATA");
+            }else {
+                if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='p'){//plasmagram
+                    plasmagram(0,num,variable,numid);
+                }else if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
+                    
+                   time_series(num,variable,data,numid);
+
+                }else{
+                    if(data["attributes"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
+                 
+                   stack_plot(num,variable,data,numid);
+
+                    }else{//spectrogram
+                        
+                        var depend1 = data["attributes"][variable]["DEPEND_1"];
+                        if(data["attributes"][depend1]["VAR_TYPE"] == "ignore_data")
+                            alert("ignore_data");
+                        else 
+                            spectrogram(num,variable,data,numid);
+                    }
+                }
+            }   
+        }
+    })
+
+   istpchartxx(offset,numid);
+}
+function istpchartxq(numid,id){
     var num = numid + "a" + id;
     addmuli(num,numid);
-    TESTER = document.getElementById('chart-istp'+num);
-    TESTER.innerHTML=" ";
-    var x=[];
-    var y=[];
     var offset = 0;
     var defer = $.Deferred();
     $.ajax({
@@ -1349,7 +1457,8 @@ function istpchartx(numid,id){
          +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
          +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
          +"&offset="+offset
-         +"&number="+100,
+         +"&number="+10,
+        timeout:5000,
         type: "GET",
         dataType: "JSON", 
         beforeSend: function(request) {
@@ -1360,6 +1469,7 @@ function istpchartx(numid,id){
              defer.resolve(data);
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.log("2313123");
                 var result = eval("("+XMLHttpRequest.responseText+")");
                        console.log(result.message);
                     },
@@ -1373,16 +1483,15 @@ function istpchartx(numid,id){
             alert("NO DATA");
         }else {
             if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='p'){//plasmagram
-
                 plasmagram(0,num,variable,numid);
             }else if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
                 //alert("time_series");
-                time_series(num,variable,data,numid);
+               time_series(num,variable,data,numid);
 
             }else{
                 if(data["attributes"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
                // alert("stack_plot");
-                stack_plot(num,variable,data,numid);
+               stack_plot(num,variable,data,numid);
 
                 }else{//spectrogram
                     //alert("spectrogram");
@@ -1397,12 +1506,19 @@ function istpchartx(numid,id){
     })
     if(id+1<ArrayVar.length) istpchartx(numid,id+1);
 }
-function istpsearch(){
-    num=0;
-   // document.getElementById("loadinga"+num).style.display="";
-    istpchart(0);
+// function istpsearch(){
+//     num=0;
+//    // document.getElementById("loadinga"+num).style.display="";
+//     istpchart(0);
+// }
+function search()
+{
+    if($("#datasources").val()=="iaga"){
+        line(0);
+    }
+    else 
+        istpchart(0);
 }
-
 
 /*
  <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>

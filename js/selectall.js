@@ -200,11 +200,7 @@ function Station_display(str,str1)
         document.getElementById("double_time"+num).style.display="block";
         document.getElementById("select_timespan"+num).style.display="none";
    } 
-   if(LineNum>=1){
-        document.getElementById("searchpart").style.display="block";
-   }else{
-        document.getElementById("searchpart").style.display="none";
-   }
+
 }
 function showDivFun(str1){
     var num = "";

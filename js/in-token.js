@@ -2,6 +2,7 @@
         var email = $.trim($("#email").val());
         var password = $.trim($("#password").val());
         var url = "127.0.0.1";
+        //var url = "172.20.76.59";
         //var url = "172.25.88.5";
          if(email == ""){
              return false;

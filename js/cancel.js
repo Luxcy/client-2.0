@@ -1,14 +1,4 @@
-// $.xhrPool = [];
-// $.xhrPool.abortAll = function() {
-//     $(this).each(function(idx, jqXHR) {
-//         console.log(idx);
-//         jqXHR.abort();
-//     });
-//     $.xhrPool = [];
-// };
 
-// $.ajaxSetup({
-//     beforeSend: function(jqXHR) {
 var ajaxs = [];
 var oldAjax = $.ajax;
 

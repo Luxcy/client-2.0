@@ -26,8 +26,10 @@
         <link rel="stylesheet" type="text/css" href="css/dataTables.min.css" />
         <script src="js/dataTables.min.js"></script>
         <script type="text/javascript" src="js/plotly.js-master/dist/plotly.js"></script>
+
    
         <link rel="stylesheet" type="text/css" href="css/style.css" /> 
+        <!-- <script src="js/tooltip.js" type="text/javascript"></script> -->
     </head>
     
     <body id="all">
@@ -58,13 +60,26 @@
             </div>
         </header>
       
-    <button id="cancelBtn">stop</button>
+    <!-- <button id="cancelBtn">stop</button> -->
         <div class="row">
             <!-- selection part -->
             <div class="col-sm-4">
+            <div>
+                  <div>
+                    <button id="que" type="button" onclick="search()">
+                    <i class="fa fa-paper-plane-o"></i>
+                      Query
+                    </button>
+                    <button id="cancelBtn">
+                    <i class="fa fa-bolt" ></i>
+                    stop</button>
+
+                  </div>
+                  <br>
+                </div>
                 <div class="scrollbar-container">
                     <div class="scrollbar-content">
-                        <div id="select_part" class="control-panel-section panel panel-default">
+                        <div id="select_part" class="control-panel-section panel panel-default" style="height: 600px;">
                             
                             <div class="panel-heading">
                                 <div class="panel-title">Select options</div>
@@ -95,8 +110,14 @@
                             <div id="istp" style="display: none;">
                             <div class="panel-heading">
                                 <div class="panel-title">
-                                    <i id="aistp" onclick="addistp()" class="fa fa-plus-square-o"></i> 
+                                    <!-- <i id="aistp" onclick="addistp()" class="fa fa-plus-square-o"></i>  -->
                                     ISTP
+                                    <div class="col-md-2">
+                                      <button class="Add-button" id="aistp" onclick="addistp()">
+                                         <i  class="fa fa-plus"></i> 
+                                         Add Filter
+                                      </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -111,6 +132,11 @@
                                             <i id="istp_right0" class="fa fa-angle-double-right"
                                             onclick="right_istp(this.id)" style="display: none"></i>
                                             <i id="ristp0" onclick="removeistp(this.id)" class="fa fa-minus-square-o" style="display: none;"></i>
+                                            <!-- <div class="col-md-2 col-md-3">
+                                              <button class="remove-button" id="ristp0" onclick="removeistp(this.id)" style="display: none;>
+                                                <i  class="fa fa-minus" style="display: none;"></i>
+                                              </button>
+                                            </div> -->
                                           </div>
                                           <div class="Select Select--single is-searchable has-value">
                                              <div class="Select-control">
@@ -187,7 +213,7 @@
                                           <div class="Select Select--single is-searchable has-value">
                                              <div class="Select-control">
                                                  <div class="Select-input">
-                                                      <select class="Select-input" id='variables0' name='variables' autocomplete="off">
+                                                      <select class="Select-input" id='variables0' name='variables' autocomplete="off" ">
                                                       </select>
                                                   </div>
                                             </div>
@@ -204,7 +230,7 @@
                                         </div>
 
                                         <div class="Select Select--single is-searchable has-value">
-                                            <div class="Select-control">
+                                            <div class="Select-control-1">
                                                 <div class="Select-input">
                                                     <div id="Timeistp0" class="Select-time">
                                                         <input type="text" class="date start" id="starttimec0" value="" autocomplete="off"/>
@@ -223,7 +249,7 @@
                             </div>
                             </div>
 
-                            <div class="panel-body">
+                           <!--  <div class="panel-body">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                         <div class="Select Select--single is-searchable has-value">
@@ -231,7 +257,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             </div>
                             <!--- iaga part-->
@@ -239,7 +265,13 @@
                             <div class="panel-heading">
                                 <div class="panel-title">
                                     IAGA
-                                    <i id="aiaga" onclick="addiaga()" class="fa fa-plus-square-o"></i> 
+                                    <!-- <i id="aiaga" onclick="addiaga()" class="fa fa-plus-square-o"></i>  -->
+                                    <div class="col-md-2">
+                                      <button class="Add-button" id="aiaga" onclick="addiaga()">
+                                         <i  class="fa fa-plus"></i> 
+                                         Add Filter
+                                      </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -253,6 +285,7 @@
                                             <label class="control-label"><span>Chart Type</span></label>
                                             <!-- <i class="fa fa-question-circle" id="ct"></i> -->
                                             <!-- <div id="ctd" style="display: none" class="hoverdiv">dadad</div> -->
+                                            <i class="fa fa-question-circle undefined"  data-toggle="tooltip" data-placement="right" title="Example tooltip"></i>
                                             <i id="iaga_down0" class="fa fa-angle-double-down" onclick="down_right(this.id)"></i>
                                             <i id="iaga_right0" class="fa fa-angle-double-right"
                                             onclick="right_down(this.id)" style="display: none"></i>
@@ -405,7 +438,7 @@
                             </div>
                             
 
-                            <div class="panel-body" id="searchpart" style="display: none">
+                       <!--      <div class="panel-body" id="searchpart" style="display: none">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                         <div class="Select Select--single is-searchable has-value">
@@ -413,7 +446,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
 
                             
@@ -429,9 +462,9 @@
        <!--     <button onclick="addK()">add</button>
             <button onclick="removeK()">remove</button> -->
             <!-- data and chart part -->
-            <div class="col-sm-8">
+            <div class="col-sm-8" style="height:670px; overflow-y: auto;">
                 <div class="chart-container">
-                    <div class="panel panel-default" style="min-height: 696px;">
+                    <div class="panel panel-default" style="min-height: 640px;">
                         <div class="col-md-offset-2 col-md-8" id="date-mid-2">
                             <div class="tab" role="tabpanel">
                                 <ul class="nav nav-tabs" role="tablist">
@@ -443,49 +476,57 @@
                                     </li>
                                 </ul>
                                 <div class="tab-content tabs">
+                                <div id="error-show" style="display: none;">
+                                     
+                                      <span class="fa fa-close pull-right" id="closethis" onclick="closeDivFun2()"></span>
+                                       <p id="error-show-inner"></p>
+                                    </div>
                                     <!-- graph  absent-->
                                     <div role="tabpanel" class="tab-pane fade in active" id="Section1" style="position: relative;">
                                         <div id="graph_iaga">
-                                        <div id="select_timespan0" style="display: block;border-bottom: 1px solid #0F5953;">
-                                            <table cellspacing="10" style="font-weight: lighter;">
+                                        <div class="slider_kuang" id="select_timespan0" style="display: block;padding-left:10px;">
+                                            <table >
                                                 <tr>
-                                                    <th class="timeyy"> <span>year</span></th>
-                                                    <th><p class="slider" id="year0"></p></th>
-                                                    <th style="width: 200px"> <input class="timeinput" type="text" id="yeara0" onchange="yinput(this.id)"/></th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="timeyy"><span>month</span></th>
-                                                    <th> <p class="slider" id="month0"></p></th>
-                                                    <th><input class="timeinput" type="text" id="montha0" onchange="minput(this.id)"/></th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="timeyy"><span>day</span></th>
-                                                    <th><p class="slider" id="day0"></p></th>
-                                                    <th><input class="timeinput" type="text" id="daya0" onchange="dinput(this.id)"/></th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="timeyy"><span>hh-mm-ss</span></th>
-                                                    <th><input class="timeinput"type="text" id="hhmmss0" value="00:00:00" autocomplete="off"/></th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="timeyy"><span>Time Span</span></th>
-                                                    <th>
-                                                        <input class="timeinput" type="text" class="spanValue" id="spanValue0" name="span_value" autocomplete="off"/>
-                                                        <select id='spanCell0' name='timespan' autocomplete="off">
+                                                    <td class="timeyy"><span>Time Span :</span></td>
+                                                    <td>
+                                                        <input class="timeinput1" type="text" class="spanValue" id="spanValue0" name="span_value" autocomplete="off" style="height: 20px"/>
+                                                        <select id='spanCell0' name='timespan' autocomplete="off" style="border-radius: 5px;">
                                                             <option value='y'>year</option>
                                                             <option value='m'>month</option>
                                                             <option value='d'>day</option>
                                                             <option value='h'>hour</option>
                                                             <option value='n'>minute</option>
                                                         </select>
-                                                    </th>
-                                                    <th>
-                                                        <button style="height: 30px;">
-                                                        <i id="stop0" onclick="stop(this.id)" class="fa fa-pause" style="display: none"></i> 
-                                                        <i id="run0" onclick="run(this.id)" class="fa fa-play"></i> 
-                                                        </button>
-                                                    </th>
+                                                    </td>
                                                 </tr>
+                                                <tr>
+                                                    <td class="timeyy"> <span>year :</span></td>
+                                                    <td style="width: 160px"><p class="slider" id="year0"></p></td>
+                                                    <td > <input class="timeinput" type="text" id="yeara0" onchange="yinput(this.id)"/></td>
+                                                    
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td class="timeyy"><span>month :</span></td>
+                                                    <td ><p class="slider" id="month0"></p></td>
+                                                    <td><input class="timeinput" type="text" id="montha0" onchange="minput(this.id)"/></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td class="timeyy"><span>day :</span></td>
+                                                    <td ><p class="slider" id="day0"></p></td>
+                                                    <td><input class="timeinput" type="text" id="daya0" onchange="dinput(this.id)"/></td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td class="timeyy"><span>hh-mm-ss :</span></td>
+                                                    <td ><input class="timeinput1"type="text" id="hhmmss0" value="00:00:00" autocomplete="off"/></td>
+                                                    <td style="border: '1';">
+                                                        <i id="stop0" onclick="stop(this.id)" class="fa fa-pause" style="display: none"></i> 
+                                                        <i id="run0" onclick="run(this.id)" class="fa fa-youtube-play fa-2x" style="float: left;"></i> 
+                                                    </td>
+                                                </tr>
+                                                
                                             </table>
                                         </div>
                                         <div class="loading" id="loading0" style="display:none;">
