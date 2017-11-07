@@ -82,19 +82,31 @@
                         <div id="select_part" class="control-panel-section panel panel-default" style="height: 600px;">
                             
                             <div class="panel-heading">
-                                <div class="panel-title">Select options</div>
+                                <div class="panel-title">Select options
+                                  <div class="col-md-2">
+                                    <button class="Add-button" id="" onclick="addall()">
+                                      <i  class="fa fa-plus"></i> 
+                                        Add Filter
+                                    </button>
+                                  </div>
+                                </div>
                             </div>
-
+                            <div id="part_all">
+                            <div id="all_part0">
                             <div class="panel-body">
                                 <div class="row space-1">
                                     <div class="col-lg-12 col-xs-12">
                                           <div class="pull-left">
-                                            <label class="control-label"><span>Datasource</span></label>
+                                            <label class="control-label"><span>Data</span></label>
+                                            <i id="all_down0" class="fa fa-angle-double-down" onclick="down_all(this.id)"></i>
+                                            <i id="all_right0" class="fa fa-angle-double-right"
+                                            onclick="right_all(this.id)" style="display: none"></i>
+                                            <i id="ristp0" onclick="removeall(this.id)" class="fa fa-minus-square-o" style="display: none;"></i>
                                           </div>
                                           <div class="Select Select--single is-searchable has-value">
                                              <div class="Select-control">
                                                  <div class="Select-input">
-                                                      <select class="Select-input" id='datasources' name='datasource' onchange="Iait_display(this.value)"autocomplete="off">
+                                                      <select class="Select-input" id='datasources0' name='datasource' onchange="Iait_display(this.value,this.id)" autocomplete="off">
                                                         <option selected="selected" value='iaga'>iaga</option>
                                                         <option value='istp'>istp</option>
                                                       </select>
@@ -105,12 +117,13 @@
                                 </div>
                             </div>
 
+                            <div id="all_others0">
+
                             <!-- istp part-->
 
-                            <div id="istp" style="display: none;">
-                            <div class="panel-heading">
+                            <div id="istp0" style="display: none;">
+                            <!-- <div class="panel-heading">
                                 <div class="panel-title">
-                                    <!-- <i id="aistp" onclick="addistp()" class="fa fa-plus-square-o"></i>  -->
                                     ISTP
                                     <div class="col-md-2">
                                       <button class="Add-button" id="aistp" onclick="addistp()">
@@ -119,7 +132,7 @@
                                       </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div id="part_istp">
                             <div id="istp_part0">
@@ -128,15 +141,10 @@
                                     <div class="col-lg-12 col-xs-12">
                                           <div class="pull-left">
                                             <label class="control-label"><span>Sources</span></label>
-                                            <i id="istp_down0" class="fa fa-angle-double-down" onclick="down_istp(this.id)"></i>
+                                            <!-- <i id="istp_down0" class="fa fa-angle-double-down" onclick="down_istp(this.id)"></i>
                                             <i id="istp_right0" class="fa fa-angle-double-right"
                                             onclick="right_istp(this.id)" style="display: none"></i>
-                                            <i id="ristp0" onclick="removeistp(this.id)" class="fa fa-minus-square-o" style="display: none;"></i>
-                                            <!-- <div class="col-md-2 col-md-3">
-                                              <button class="remove-button" id="ristp0" onclick="removeistp(this.id)" style="display: none;>
-                                                <i  class="fa fa-minus" style="display: none;"></i>
-                                              </button>
-                                            </div> -->
+                                            <i id="ristp0" onclick="removeistp(this.id)" class="fa fa-minus-square-o" style="display: none;"></i> -->
                                           </div>
                                           <div class="Select Select--single is-searchable has-value">
                                              <div class="Select-control">
@@ -249,23 +257,12 @@
                             </div>
                             </div>
 
-                           <!--  <div class="panel-body">
-                                <div class="row space-1">
-                                    <div class="col-lg-12 col-xs-12">
-                                        <div class="Select Select--single is-searchable has-value">
-                                            <input class="btn-1" id='istpsearch' type="submit" value="Submit" onclick="istpsearch()" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
-
                             </div>
                             <!--- iaga part-->
-                            <div id="iaga" style="display: block;">
-                            <div class="panel-heading">
+                            <div id="iaga0" style="display: block;">
+                           <!--  <div class="panel-heading">
                                 <div class="panel-title">
                                     IAGA
-                                    <!-- <i id="aiaga" onclick="addiaga()" class="fa fa-plus-square-o"></i>  -->
                                     <div class="col-md-2">
                                       <button class="Add-button" id="aiaga" onclick="addiaga()">
                                          <i  class="fa fa-plus"></i> 
@@ -273,7 +270,7 @@
                                       </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div id="part_iaga">
                             <div id="iaga_part0"> 
@@ -285,11 +282,11 @@
                                             <label class="control-label"><span>Chart Type</span></label>
                                             <!-- <i class="fa fa-question-circle" id="ct"></i> -->
                                             <!-- <div id="ctd" style="display: none" class="hoverdiv">dadad</div> -->
-                                            <i class="fa fa-question-circle undefined"  data-toggle="tooltip" data-placement="right" title="Example tooltip"></i>
+                                           <!--  <i class="fa fa-question-circle undefined"  data-toggle="tooltip" data-placement="right" title="Example tooltip"></i>
                                             <i id="iaga_down0" class="fa fa-angle-double-down" onclick="down_right(this.id)"></i>
                                             <i id="iaga_right0" class="fa fa-angle-double-right"
                                             onclick="right_down(this.id)" style="display: none"></i>
-                                            <i id="riaga0" onclick="removeiaga(this.id)" class="fa fa-minus-square-o" style="display: none"></i>
+                                            <i id="riaga0" onclick="removeiaga(this.id)" class="fa fa-minus-square-o" style="display: none"></i> -->
                                           </div>
                                           <div class="Select Select--single is-searchable has-value">
                                              <div class="Select-control">
@@ -451,6 +448,10 @@
 
                             
 
+                            </div>
+
+                            </div>
+                            </div>
                             </div>
 
                         </div>

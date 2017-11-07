@@ -1,19 +1,30 @@
 //istp iaga part
-function Iait_display(str){
-    if(str=="iaga"){
-        document.getElementById("iaga").style.display="block";
-        document.getElementById("graph_iaga").style.display="block";
-        document.getElementById("table_iaga").style.display="block";
-        document.getElementById("istp").style.display="none";
-        document.getElementById("graph_istp").style.display="none";
-        document.getElementById("table_istp").style.display="none";
+function Iait_display(str1,str){
+    var num = "";
+    for(var i=0;i<str.length;i++){
+        if(str[i]>='0'&&str[i]<='9')
+            num+=str[i];
+    }
+
+    if(str1=="iaga"){
+        document.getElementById("iaga"+num).style.display="block";
+        document.getElementById("select_timespan"+num).style.display="block";
+        // document.getElementById("loading"+num).style.display="none";
+        document.getElementById("chart-part"+num).style.display="block";
+        document.getElementById("tablepart"+num).style.display="block";
+        document.getElementById("istp"+num).style.display="none";
+        document.getElementById("graph_mult"+num).style.display="none";
+        document.getElementById("table_mult"+num).style.display="none";
     }else{
-        document.getElementById("istp").style.display="block";
-        document.getElementById("iaga").style.display="none";
-        document.getElementById("graph_iaga").style.display="none";
-        document.getElementById("table_iaga").style.display="none";
-        document.getElementById("graph_istp").style.display="block";
-        document.getElementById("table_istp").style.display="block";
+        document.getElementById("istp"+num).style.display="block";
+        document.getElementById("iaga"+num).style.display="none";
+        document.getElementById("select_timespan"+num).style.display="none";
+        // document.getElementById("loading"+num).style.display="none";
+        document.getElementById("chart-part"+num).style.display="none";
+        document.getElementById("tablepart"+num).style.display="none";
+        document.getElementById("graph_mult"+num).style.display="block";
+        document.getElementById("table_mult"+num).style.display="block";
+
     }
 }
 // variables select  /istp/data_sets/{data_set}/variables
@@ -582,6 +593,27 @@ function right_down(str1){
     document.getElementById("iaga_right"+num).style.display="none";
     document.getElementById("iaga_down"+num).style.display="";
     $("#iaga_others"+num).show(1000);
+}
+//right_down all 
+function down_all(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    document.getElementById("all_right"+num).style.display="";
+    document.getElementById("all_down"+num).style.display="none";
+    $("#all_others"+num).hide(1000);
+}
+function right_all(str1){
+    var num = "";
+    for(var i=0;i<str1.length;i++){
+        if(str1[i]>='0'&&str1[i]<='9')
+            num+=str1[i];
+    }
+    document.getElementById("all_right"+num).style.display="none";
+    document.getElementById("all_down"+num).style.display="";
+    $("#all_others"+num).show(1000);
 }
 //right_down istp part
 function down_istp(str1){

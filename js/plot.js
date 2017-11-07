@@ -608,20 +608,7 @@ function Logoutbtn(){
     window.location.href='login.html';
 }
 
-// function search(){
-//     line(0);
-//     // for(var num=0;num<=SelectNum;num++)
-//     // {
-//     //     if($("#iaga_part"+num).length>0){
-//     //         //console.log(num);
 
-//     //         document.getElementById("tablepart"+num).style.display="none";
-//     //         document.getElementById("loading"+num).style.display="block";
-//     //         document.getElementById("select_timespan"+num).style.display="none";
-//     //         line(num);
-//     //     }
-//     // }   
-// }
 //=======================================================================
 // /istp/data_sets/{data_set}/data?
 //                                     variables={variables}&
@@ -633,14 +620,14 @@ function time_series(num,variable,datas,numid){
     
     var values = [];
     var ycnt,ytext=[];
-    var labl = datas["attributes"][variable]["LABL_PTR_1"];
+    var labl = datas["attrs"][variable]["LABL_PTR_1"];
     if(labl == undefined){
         ycnt = 1;
         ytext[0] =variable;
     }
     else
     {
-        values = datas["attributes"][labl]["VALUES"];
+        values = datas["attrs"][labl]["VALUES"];
         ycnt = values.length;
         ytext = [];
         for(var i=0;i<ycnt;i++)
@@ -771,14 +758,14 @@ function time_seriesx(variable,num,numid,datas)
     var cnt = datas.count;
     var values = [];
     var ycnt,ytext=[];
-    var labl = datas["attributes"][variable]["LABL_PTR_1"];
+    var labl = datas["attrs"][variable]["LABL_PTR_1"];
     if(labl == undefined){
         ycnt = 1;
         ytext[0] =variable;
     }
     else
     {
-        values = datas["attributes"][labl]["VALUES"];
+        values = datas["attrs"][labl]["VALUES"];
         ycnt = values.length;
         ytext = [];
         for(var i=0;i<ycnt;i++)
@@ -867,8 +854,8 @@ function plasmagram(offset,num,variable,numid){
                        console.log(result.message);
         },
     }).done(function(datas){
-        var depend_1 = datas["attributes"][variable]["DEPEND_1"];
-        var depend_2 = datas["attributes"][variable]["DEPEND_2"];
+        var depend_1 = datas["attrs"][variable]["DEPEND_1"];
+        var depend_2 = datas["attrs"][variable]["DEPEND_2"];
         
         var xcnt = datas["data"][0][depend_1].length;
         var ycnt = datas["data"][0][depend_2].length;
@@ -899,6 +886,9 @@ function plasmagram(offset,num,variable,numid){
         for(var i=0;i<ycnt;i++){
             z[i]=[];
             for(var j=0;j<xcnt;j++){
+                console.log(datas["data"][0][variable]);
+                console.log(cy[i].id);
+                console.log(cx[j].id);
                z[i][j]=datas["data"][0][variable][cy[i].id][cx[j].id];
             }
         }
@@ -968,8 +958,8 @@ function spectrogram(num,variable,datas,numid){
     var cnt = datas.count;
     
     var values = [];
-    var depend_1 = datas["attributes"][variable]["DEPEND_1"];
-    values = datas["attributes"][depend_1]["VALUES"];
+    var depend_1 = datas["attrs"][variable]["DEPEND_1"];
+    values = datas["attrs"][depend_1]["VALUES"];
 
 //if(values == undefined) !!!!!!VALIDMAX VALIDMIN
     var ycnt = values.length;
@@ -996,7 +986,7 @@ function spectrogram(num,variable,datas,numid){
         y: y,
         z: z,
         type: 'heatmap',
-        name:datas["attributes"][depend_1]["LABLAXIS"],
+        name:datas["attrs"][depend_1]["LABLAXIS"],
         showlegend:false,
     }];
     
@@ -1088,8 +1078,8 @@ function spectrogramx(offset,num,variable,numid,x,y,z){
    .done(function(datas){
         var cnt = datas.count;
         var values = [];
-        var depend_1 = datas["attributes"][variable]["DEPEND_1"];
-        values = datas["attributes"][depend_1]["VALUES"];
+        var depend_1 = datas["attrs"][variable]["DEPEND_1"];
+        values = datas["attrs"][depend_1]["VALUES"];
 
         var ycnt = values.length;
 
@@ -1108,7 +1098,7 @@ function spectrogramx(offset,num,variable,numid,x,y,z){
         y: y,
         z: z,
         type: 'heatmap',
-        name:datas["attributes"][depend_1]["LABLAXIS"],
+        name:datas["attrs"][depend_1]["LABLAXIS"],
         showlegend:false,
     }];
     
@@ -1323,7 +1313,7 @@ function istpchart(num) {
             return this.value; 
         }).get();
   istpchartx(num);
-   if(num+1<=istpNum) istpchart(num+1);
+   //if(num+1<=istpNum) istpchart(num+1);
 };
 function istpchartxx(offset,numid)
 {
@@ -1334,7 +1324,7 @@ function istpchartxx(offset,numid)
          +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
          +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
          +"&offset="+offset
-         +"&number="+10,
+         +"&number="+100,
         type: "GET",
         dataType: "JSON", 
         beforeSend: function(request) {
@@ -1360,15 +1350,15 @@ function istpchartxx(offset,numid)
             var variable = ArrayVar[id];
             
     
-            if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='p'){//plasmagram
+            if(data["attrs"][variable]["DISPLAY_TYPE"][0]=='p'|| data["attrs"][variable]["DISPLAY_TYPE"][0]=='i'){//plasmagram
                 console.log("plasmagram");
                 //plasmagramx(variable,num,numid,data);
-            }else if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
+            }else if(data["attrs"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
                 
                 time_seriesx(variable,num,numid,data);
 
             }else{
-                if(data["attributes"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
+                if(data["attrs"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
              
                stack_plotx(variable,num,numid,data);
 
@@ -1383,6 +1373,7 @@ function istpchartxx(offset,numid)
 }
 function istpchartx(numid)
 {
+    console.log("dasda");
     var offset = 0;
     var defer = $.Deferred();
     $.ajax({
@@ -1391,7 +1382,7 @@ function istpchartx(numid)
          +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
          +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
          +"&offset="+offset
-         +"&number="+10,
+         +"&number="+100,
         type: "GET",
         dataType: "JSON", 
         beforeSend: function(request) {
@@ -1415,26 +1406,26 @@ function istpchartx(numid)
             addmuli(num,numid);
             document.getElementById("loadinga"+num).style.display="none";
             var variable = ArrayVar[id];
-            if(data["attributes"][variable]["DISPLAY_TYPE"] == undefined){
+            if(data["attrs"][variable]["DISPLAY_TYPE"] == undefined){
                 alert("NO DISPLAY_TYPE");
             }else if(data["data"].length == 0){
                 alert("NO DATA");
             }else {
-                if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='p'){//plasmagram
+                if(data["attrs"][variable]["DISPLAY_TYPE"][0]=='p'||data["attrs"][variable]["DISPLAY_TYPE"][0]=='i'){//plasmagram
                     plasmagram(0,num,variable,numid);
-                }else if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
+                }else if(data["attrs"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
                     
                    time_series(num,variable,data,numid);
 
                 }else{
-                    if(data["attributes"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
+                    if(data["attrs"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
                  
                    stack_plot(num,variable,data,numid);
 
                     }else{//spectrogram
                         
-                        var depend1 = data["attributes"][variable]["DEPEND_1"];
-                        if(data["attributes"][depend1]["VAR_TYPE"] == "ignore_data")
+                        var depend1 = data["attrs"][variable]["DEPEND_1"];
+                        if(data["attrs"][depend1]["VAR_TYPE"] == "ignore_data")
                             alert("ignore_data");
                         else 
                             spectrogram(num,variable,data,numid);
@@ -1443,81 +1434,23 @@ function istpchartx(numid)
             }   
         }
     })
-
    istpchartxx(offset,numid);
 }
-function istpchartxq(numid,id){
-    var num = numid + "a" + id;
-    addmuli(num,numid);
-    var offset = 0;
-    var defer = $.Deferred();
-    $.ajax({
-        url: URL+"/data_sets/"+$("#data_sets"+numid).val()+"/data?"
-         +"variables="+ArrayVar[id]
-         +"&start_time="+$("#starttimec"+numid).val()+" "+$("#starttimed"+numid).val()
-         +"&end_time="+$("#endtimec"+numid).val()+" "+$("#endtimed"+numid).val()
-         +"&offset="+offset
-         +"&number="+10,
-        timeout:5000,
-        type: "GET",
-        dataType: "JSON", 
-        beforeSend: function(request) {
-            token = window.sessionStorage.getItem('token');
-            request.setRequestHeader("Authorization", token);
-        },
-        success:function(data){
-             defer.resolve(data);
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log("2313123");
-                var result = eval("("+XMLHttpRequest.responseText+")");
-                       console.log(result.message);
-                    },
-    })
-   .done(function(data){
-        document.getElementById("loadinga"+num).style.display="none";
-        var variable = ArrayVar[id];
-        if(data["attributes"][variable]["DISPLAY_TYPE"] == undefined){
-            alert("NO DISPLAY_TYPE");
-        }else if(data["data"].length == 0){
-            alert("NO DATA");
-        }else {
-            if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='p'){//plasmagram
-                plasmagram(0,num,variable,numid);
-            }else if(data["attributes"][variable]["DISPLAY_TYPE"][0]=='t'){//time_series
-                //alert("time_series");
-               time_series(num,variable,data,numid);
 
-            }else{
-                if(data["attributes"][variable]["DISPLAY_TYPE"][1]=='t'){//stack_plot
-               // alert("stack_plot");
-               stack_plot(num,variable,data,numid);
-
-                }else{//spectrogram
-                    //alert("spectrogram");
-                    var depend1 = data["attributes"][variable]["DEPEND_1"];
-                    if(data["attributes"][depend1]["VAR_TYPE"] == "ignore_data")
-                        alert("ignore_data");
-                    else 
-                        spectrogram(num,variable,data,numid);
-                }
-            }
-        }   
-    })
-    if(id+1<ArrayVar.length) istpchartx(numid,id+1);
+function graph(i)
+{
+    if($("#datasources"+i).val()=="iaga"){
+        line(i);
+    }else{
+        console.log("asda");
+        istpchart(i);
+    }
+    if(i+1<=istpNum) graph(i+1);
 }
-// function istpsearch(){
-//     num=0;
-//    // document.getElementById("loadinga"+num).style.display="";
-//     istpchart(0);
-// }
 function search()
 {
-    if($("#datasources").val()=="iaga"){
-        line(0);
-    }
-    else 
-        istpchart(0);
+    console.log(istpNum+" :" + iagaNum);
+    graph(0);
 }
 
 /*
